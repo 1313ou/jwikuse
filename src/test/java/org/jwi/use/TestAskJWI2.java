@@ -5,8 +5,10 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class TestJWI2
+public class TestAskJWI2
 {
+	private static String word;
+
 	private static JWI jwi1;
 
 	private static JWI jwi2;
@@ -14,6 +16,7 @@ public class TestJWI2
 	@BeforeAll
 	public static void init() throws IOException
 	{
+		word = System.getProperty("WORD");
 		String wnHome1 = System.getenv("WNHOME31");
 		String wnHome2 = System.getenv("WNHOMEXX");
 		jwi1 = new JWI(wnHome1);
@@ -21,23 +24,23 @@ public class TestJWI2
 	}
 
 	@Test
-	public void walkSpread() throws IOException
+	public void walkWord()
 	{
-		walk2("spread");
+		walk2(word);
 	}
 
 	@Test
-	public void walkSpread1() throws IOException
+	public void walkWord1()
 	{
 		System.out.println(jwi1.wnHome);
-		jwi1.walk("spread");
+		jwi1.walk(word);
 	}
 
 	@Test
-	public void walkSpread2() throws IOException
+	public void walkWord2()
 	{
 		System.out.println(jwi2.wnHome);
-		jwi2.walk("spread");
+		jwi2.walk(word);
 	}
 
 	private void walk2(String lemma)
