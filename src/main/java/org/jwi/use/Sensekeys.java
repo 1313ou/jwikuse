@@ -2,7 +2,6 @@ package org.jwi.use;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import edu.mit.jwi.data.parse.SenseKeyParser;
 import edu.mit.jwi.item.ISenseEntry;

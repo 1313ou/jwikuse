@@ -10,33 +10,35 @@ import edu.mit.jwi.item.ISenseKey;
 import edu.mit.jwi.item.ISynset;
 import edu.mit.jwi.item.IWord;
 
-public class TestJWIIterate
+public class JWIIterateTests
 {
+	// private static final boolean verbose = !System.getProperties().containsKey("SILENT");
+
 	private static JWI jwi;
 
 	@BeforeAll
 	public static void init() throws IOException
 	{
-		String wnHome = System.getenv("WNHOMEXX");
-		jwi = new JWI(wnHome, JWI.Mode.XX);
+		String wnHome = System.getProperty("SOURCE");
+		jwi = new JWI(wnHome);
 	}
 
 	@Test
-	public void iterateLemmas() throws IOException
+	public void iterateLemmas()
 	{
 		jwi.forAllLemmas((String l) -> {
 		});
 	}
 
 	@Test
-	public void iterateSenses() throws IOException
+	public void iterateSenses()
 	{
 		jwi.forAllSenses((IWord s) -> {
 		});
 	}
 
 	@Test
-	public void iterateSynsets() throws IOException
+	public void iterateSynsets()
 	{
 		jwi.forAllSynsets((ISynset s) -> {
 		});
