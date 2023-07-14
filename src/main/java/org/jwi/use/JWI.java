@@ -53,6 +53,47 @@ public class JWI
 
 	// M A I N   I T E R A T I O N S
 
+	public void forAllLemmas(final Consumer<String> f)
+	{
+		for (final POS pos : POS.values())
+		{
+			Iterator<IIndexWord> it = this.dict.getIndexWordIterator(pos);
+			while (it.hasNext())
+			{
+				IIndexWord idx = it.next();
+				String lemma = idx.getLemma();
+				if (f != null)
+				{
+					f.accept(lemma);
+				}
+			}
+		}
+	}
+
+	public void tryForAllLemmas(final Consumer<String> f)
+	{
+		for (final POS pos : POS.values())
+		{
+			Iterator<IIndexWord> it = this.dict.getIndexWordIterator(pos);
+			while (it.hasNext())
+			{
+				try
+				{
+					IIndexWord idx = it.next();
+					String lemma = idx.getLemma();
+					if (f != null)
+					{
+						f.accept(lemma);
+					}
+				}
+				catch (Exception e)
+				{
+					System.err.println(it + " " + e.getMessage());
+				}
+			}
+		}
+	}
+
 	public void forAllSenses(final Consumer<IWord> f)
 	{
 		for (final POS pos : POS.values())
@@ -187,69 +228,6 @@ public class JWI
 	}
 
 	// S P E C I F I C   I T E R A T I O N S
-
-	public void forAllLemmas(final Consumer<String> f)
-	{
-		for (final POS pos : POS.values())
-		{
-			Iterator<IIndexWord> it = this.dict.getIndexWordIterator(pos);
-			while (it.hasNext())
-			{
-				IIndexWord idx = it.next();
-				final List<IWordID> senseids = idx.getWordIDs();
-				for (final IWordID senseid : senseids) // synset id, sense number, and lemma
-				{
-					IWord sense = this.dict.getWord(senseid);
-					if (sense == null)
-					{
-						System.err.printf("⚠ senseid: %s ➜ null sense", senseid.toString());
-						// IWord sense2 = this.dict.getWord(senseid);
-						continue;
-					}
-					String lemma = sense.getLemma();
-					if (f != null)
-					{
-						f.accept(lemma);
-					}
-				}
-			}
-		}
-	}
-
-	public void tryForAllLemmas(final Consumer<String> f)
-	{
-		for (final POS pos : POS.values())
-		{
-			Iterator<IIndexWord> it = this.dict.getIndexWordIterator(pos);
-			while (it.hasNext())
-			{
-				IIndexWord idx = it.next();
-				final List<IWordID> senseids = idx.getWordIDs();
-				for (final IWordID senseid : senseids) // synset id, sense number, and lemma
-				{
-					try
-					{
-						IWord sense = this.dict.getWord(senseid);
-						if (sense == null)
-						{
-							System.err.printf("⚠ senseid: %s ➜ null sense", senseid.toString());
-							// IWord sense2 = this.dict.getWord(senseid);
-							continue;
-						}
-						String lemma = sense.getLemma();
-						if (f != null)
-						{
-							f.accept(lemma);
-						}
-					}
-					catch (Exception e)
-					{
-						System.err.println(senseid + " " + e.getMessage());
-					}
-				}
-			}
-		}
-	}
 
 	public void forAllSynsetRelations(final Consumer<ISynset> f)
 	{
