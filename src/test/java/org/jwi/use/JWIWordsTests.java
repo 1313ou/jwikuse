@@ -1,5 +1,7 @@
 package org.jwi.use;
 
+import edu.mit.jwi.item.IIndexWord;
+import edu.mit.jwi.item.POS;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -7,7 +9,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-public class JWITests
+public class JWIWordsTests
 {
     private static final boolean VERBOSE = !System.getProperties().containsKey("SILENT");
 
@@ -32,8 +34,16 @@ public class JWITests
     }
 
     @Test
-    public void walkWord()
+    public void searchWord()
     {
-        jwi.walk(word, PS);
+        for (final POS pos : POS.values())
+        {
+            IIndexWord index = jwi.getDict().getIndexWord(word, pos);
+            if (index != null)
+            {
+                String lemma = index.getLemma();
+                System.out.println(pos + " " + lemma);
+            }
+        }
     }
 }
