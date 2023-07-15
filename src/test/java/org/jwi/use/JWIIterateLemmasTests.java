@@ -4,10 +4,25 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JWIIterateLemmasTests
 {
-    // private static final boolean verbose = !System.getProperties().containsKey("SILENT");
+    private static final boolean VERBOSE = !System.getProperties().containsKey("SILENT");
+
+    private static final PrintStream PS = VERBOSE ? System.out : new PrintStream(new OutputStream()
+    {
+        public void write(int b)
+        {
+            //DO NOTHING
+        }
+    });
 
     private static JWI jwi;
 
@@ -21,17 +36,22 @@ public class JWIIterateLemmasTests
     @Test
     public void iterateLemmas()
     {
-        jwi.forAllLemmas(System.out::println);
+        jwi.forAllLemmas(PS::println);
     }
 
     @Test
     public void searchLemmas()
     {
+        String start = System.getProperty("TARGET");
+        Set<String> actual = jwi.getDict().getWords(start, null);
+
+        Set<String> expected = new TreeSet<>();
         jwi.forAllLemmas((w) -> {
-            if (w.matches("arb.*"))
+            if (w.startsWith(start))
             {
-                System.out.println(w);
+                expected.add(w);
             }
         });
+        assertEquals(expected, actual);
     }
 }
