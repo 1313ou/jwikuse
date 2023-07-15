@@ -101,7 +101,7 @@ public class ComparatorsTests
 
     static SortedSet<String> generate(Comparator<String> cmp, String... items)
     {
-        //System.out.printf("\tin\t%s%n", Arrays.toString(items));
+        //PS.printf("\tin\t%s%n", Arrays.toString(items));
         SortedSet<String> set = new TreeSet<>(cmp);
         set.addAll(Arrays.asList(items));
         set.addAll(Arrays.asList(items)); // again
