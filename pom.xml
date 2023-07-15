@@ -7,7 +7,7 @@
     <groupId>io.github.x-englishwordnet</groupId>
     <artifactId>jwixuse</artifactId>
     <packaging>jar</packaging>
-    <version>2.4.0.4</version>
+    <version>2.4.0.5</version>
 
     <name>Java WordNet Extended Interface Utils</name>
     <description>Java library utils for JWI</description>
@@ -23,7 +23,7 @@
         <dependency>
             <groupId>io.github.x-englishwordnet</groupId>
             <artifactId>jwix</artifactId>
-            <version>2.4.0.4</version>
+            <version>2.4.0.5</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -78,6 +78,10 @@
                         <property>
                             <name>WORD</name>
                             <value>love</value>
+                        </property>
+                        <property>
+                            <name>TARGET</name>
+                            <value>arb</value>
                         </property>
                         <property>
                             <name>SILENT</name>
