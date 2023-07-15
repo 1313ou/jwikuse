@@ -42,7 +42,7 @@ public class JWIWordsTests
             if (index != null)
             {
                 String lemma = index.getLemma();
-                System.out.println(pos + " " + lemma);
+                PS.println(pos + " " + lemma);
             }
         }
     }

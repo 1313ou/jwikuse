@@ -8,10 +8,20 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 public class JWIIterateTests
 {
-    // private static final boolean verbose = !System.getProperties().containsKey("SILENT");
+    private static final boolean VERBOSE = !System.getProperties().containsKey("SILENT");
+
+    private static final PrintStream PS = VERBOSE ? System.out : new PrintStream(new OutputStream()
+    {
+        public void write(int b)
+        {
+            //DO NOTHING
+        }
+    });
 
     private static JWI jwi;
 

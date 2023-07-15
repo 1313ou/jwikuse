@@ -59,7 +59,7 @@ public class JWICrossTests
     {
         PS.println(jwi1.wnHome);
         jwi1.walk(lemma, PS);
-        System.out.println(jwi2.wnHome);
+        PS.println(jwi2.wnHome);
         jwi2.walk(lemma, PS);
     }
 }
