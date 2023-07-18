@@ -43,7 +43,7 @@ public class JWIIterateLemmasTests
     public void searchLemmas()
     {
         String start = System.getProperty("TARGET");
-        Set<String> actual = jwi.getDict().getWords(start, null);
+        Set<String> actual = jwi.getDict().getWords(start, null, 0);
 
         Set<String> expected = new TreeSet<>();
         jwi.forAllLemmas((w) -> {
