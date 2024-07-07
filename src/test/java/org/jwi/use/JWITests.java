@@ -1,11 +1,13 @@
 package org.jwi.use;
 
+import edu.mit.jwi.Config;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.nio.charset.Charset;
 
 public class JWITests
 {
@@ -28,7 +30,10 @@ public class JWITests
     {
         word = System.getProperty("WORD");
         String wnHome = System.getProperty("SOURCE");
-        jwi = new JWI(wnHome);
+		// Config config = new Config();
+		// config.charSet = Charset.defaultCharset();
+	    // jwi = new JWI(wnHome, config);
+	    jwi = new JWI(wnHome);
     }
 
     @Test
