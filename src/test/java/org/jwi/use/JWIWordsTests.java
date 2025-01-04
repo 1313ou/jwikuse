@@ -1,15 +1,15 @@
 package org.jwi.use;
 
-import edu.mit.jwi.Config;
+import edu.mit.jwi.item.IIndexWord;
+import edu.mit.jwi.item.POS;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.nio.charset.Charset;
 
-public class JWITests
+public class JWIWordsTests
 {
     private static final boolean VERBOSE = !System.getProperties().containsKey("SILENT");
 
@@ -30,15 +30,20 @@ public class JWITests
     {
         word = System.getProperty("WORD");
         String wnHome = System.getProperty("SOURCE");
-		// Config config = new Config();
-		// config.charSet = Charset.defaultCharset();
-	    // jwi = new JWI(wnHome, config);
-	    jwi = new JWI(wnHome);
+        jwi = new JWI(wnHome);
     }
 
     @Test
-    public void walkWord()
+    public void searchWord()
     {
-        jwi.walk(word, PS);
+        for (final POS pos : POS.values())
+        {
+            IIndexWord index = jwi.getDict().getIndexWord(word, pos);
+            if (index != null)
+            {
+                String lemma = index.getLemma();
+                PS.println(pos + " " + lemma);
+            }
+        }
     }
 }
