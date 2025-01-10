@@ -38,7 +38,7 @@ public class JWIWordsTests
     {
         for (final POS pos : POS.values())
         {
-            IIndexWord index = jwi.getDict().getIndexWord(word, pos);
+            IIndexWord index = jwi.dict.getIndexWord(word, pos);
             if (index != null)
             {
                 String lemma = index.getLemma();

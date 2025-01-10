@@ -50,7 +50,7 @@ public class SensekeysTests
 
         jwi.forAllSenses(s -> {
             ISenseKey sk = s.getSenseKey();
-            ISenseEntry se = jwi.getDict().getSenseEntry(sk);
+            ISenseEntry se = jwi.dict.getSenseEntry(sk);
             if (se == null)
             {
                 System.err.printf("Sensekey not found %s%n", sk.toString());
@@ -69,7 +69,7 @@ public class SensekeysTests
 
         jwi.forAllSenses(s -> {
             ISenseKey sk = s.getSenseKey();
-            ISenseEntry se = jwi.getDict().getSenseEntry(sk);
+            ISenseEntry se = jwi.dict.getSenseEntry(sk);
             if (se == null)
             {
                 System.err.printf("Sensekey not found %s%n", sk.toString());

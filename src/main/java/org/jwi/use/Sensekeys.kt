@@ -1,34 +1,30 @@
-package org.jwi.use;
+package org.jwi.use
 
-import edu.mit.jwi.data.parse.SenseKeyParser;
-import edu.mit.jwi.item.ISenseEntry;
-import edu.mit.jwi.item.ISenseKey;
-import edu.mit.jwi.item.IWord;
+import edu.mit.jwi.data.parse.SenseKeyParser.Companion.instance
+import edu.mit.jwi.item.ISenseEntry
+import edu.mit.jwi.item.IWordID
+import java.util.function.Consumer
 
-import java.util.ArrayList;
-import java.util.Collection;
+object Sensekeys {
 
-public class Sensekeys
-{
-    public static Collection<ISenseEntry> findSensekeysOf(JWI jwi, String lemma)
-    {
-        Collection<ISenseEntry> result = new ArrayList<>();
-        jwi.forAllSenseIDs(lemma, (si) -> {
-
-            IWord sense = jwi.getDict().getWord(si);
-            ISenseKey generatedSk = sense.getSenseKey();
+    @JvmStatic
+    fun findSensekeysOf(jwi: JWI, lemma: String): Collection<ISenseEntry> {
+        val result: MutableCollection<ISenseEntry> = ArrayList<ISenseEntry>()
+        jwi.forAllSenseIDs(lemma, Consumer { si: IWordID ->
+            val sense = jwi.dict.getWord(si)
+            val generatedSk = sense!!.senseKey
             // lookup
-            ISenseEntry se = jwi.getDict().getSenseEntry(generatedSk);
-            result.add(se);
-        });
-        return result;
+            val se = jwi.dict.getSenseEntry(generatedSk)!!
+            result.add(se)
+        })
+        return result
     }
 
-    public static ISenseEntry lookupSensekey(JWI jwi, String skStr)
-    {
-        ISenseKey parsedSk = SenseKeyParser.getInstance().parseLine(skStr);
-        assert skStr.equals(parsedSk.toString());
+    @JvmStatic
+    fun lookupSensekey(jwi: JWI, skStr: String): ISenseEntry? {
+        val parsedSk = instance!!.parseLine(skStr)
+        assert(skStr == parsedSk.toString())
         // lookup
-        return jwi.getDict().getSenseEntry(parsedSk);
+        return jwi.dict.getSenseEntry(parsedSk)
     }
 }

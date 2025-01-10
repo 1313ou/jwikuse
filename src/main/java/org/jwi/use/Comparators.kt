@@ -1,24 +1,22 @@
-package org.jwi.use;
+package org.jwi.use
 
-import java.util.Comparator;
+object Comparators {
 
-public class Comparators
-{
-    public static final Comparator<String> cmpLOUpperFirst = (s1, s2) -> {
-        int c = s1.compareToIgnoreCase(s2);
-        if (c != 0)
-        {
-            return c;
+    @JvmField
+    val cmpLOUpperFirst: java.util.Comparator<String?> = Comparator { s1: String?, s2: String? ->
+        val c = s1!!.compareTo(s2!!, ignoreCase = true)
+        if (c != 0) {
+            return@Comparator c
         }
-        return s1.compareTo(s2);
-    };
+        s1.compareTo(s2)
+    }
 
-    public static final Comparator<String> cmpLOLowerFirst = (s1, s2) -> {
-        int c = s1.compareToIgnoreCase(s2);
-        if (c != 0)
-        {
-            return c;
+    @JvmField
+    val cmpLOLowerFirst: Comparator<String?> = Comparator { s1: String?, s2: String? ->
+        val c = s1!!.compareTo(s2!!, ignoreCase = true)
+        if (c != 0) {
+            return@Comparator c
         }
-        return -s1.compareTo(s2);
-    };
+        -s1.compareTo(s2)
+    }
 }

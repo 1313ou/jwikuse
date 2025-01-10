@@ -1,355 +1,238 @@
-package org.jwi.use;
+package org.jwi.use
 
-import edu.mit.jwi.Config;
-import edu.mit.jwi.Dictionary;
-import edu.mit.jwi.IDictionary;
-import edu.mit.jwi.item.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.net.URL;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Consumer;
+import edu.mit.jwi.Config
+import edu.mit.jwi.Dictionary
+import edu.mit.jwi.IDictionary
+import edu.mit.jwi.item.*
+import java.io.File
+import java.io.IOException
+import java.io.PrintStream
+import java.util.function.Consumer
+import kotlin.Throws
 
 /**
  * JWI
  *
  * @author Bernard Bou
  */
-public class JWI
-{
-    public final String wnHome;
+class JWI
+@JvmOverloads constructor(@JvmField val wnHome: String, config: Config? = null) {
 
-    private final IDictionary dict;
+    @JvmField
+    val dict: IDictionary
 
-    public JWI(final String wnHome) throws IOException
-    {
-        this(wnHome, null);
-    }
-
-    public JWI(final String wnHome, final Config config) throws IOException
-    {
-        this.wnHome = wnHome;
-        System.out.printf("FROM %s%n", wnHome);
+    init {
+        System.out.printf("FROM %s%n", wnHome)
 
         // construct the URL to the WordNet dictionary directory
-        URL url = new File(wnHome).toURI().toURL();
+        val url = File(wnHome).toURI().toURL()
 
         // construct the dictionary object and open it
-        this.dict = new Dictionary(url, config);
+        dict = Dictionary(url, config)
 
         // open it
-        this.dict.open();
-    }
-
-    public IDictionary getDict()
-    {
-        return dict;
+        dict.open()
     }
 
     // M A I N   I T E R A T I O N S
+    fun forAllLemmas(f: Consumer<String?>?) {
+        for (pos in POS.entries) {
+            val it: Iterator<IIndexWord> = dict.getIndexWordIterator(pos)
+            while (it.hasNext()) {
+                val idx = it.next()
+                val lemma = idx.lemma
+                f?.accept(lemma)
+            }
+        }
+    }
 
-    public void forAllLemmas(final Consumer<String> f)
-    {
-        for (final POS pos : POS.values())
-        {
-            Iterator<IIndexWord> it = this.dict.getIndexWordIterator(pos);
-            while (it.hasNext())
-            {
-                IIndexWord idx = it.next();
-                String lemma = idx.getLemma();
-                if (f != null)
-                {
-                    f.accept(lemma);
+    fun tryForAllLemmas(f: Consumer<String>?) {
+        for (pos in POS.entries) {
+            val it: Iterator<IIndexWord> = dict.getIndexWordIterator(pos)
+            while (it.hasNext()) {
+                try {
+                    val idx = it.next()
+                    val lemma = idx.lemma
+                    f?.accept(lemma)
+                } catch (e: Exception) {
+                    System.err.println(it.toString() + " " + e.message)
                 }
             }
         }
     }
 
-    public void tryForAllLemmas(final Consumer<String> f)
-    {
-        for (final POS pos : POS.values())
-        {
-            Iterator<IIndexWord> it = this.dict.getIndexWordIterator(pos);
-            while (it.hasNext())
-            {
-                try
+    fun forAllSenses(f: Consumer<IWord>?) {
+        for (pos in POS.entries) {
+            val it: Iterator<IIndexWord> = dict.getIndexWordIterator(pos)
+            while (it.hasNext()) {
+                val idx = it.next()
+                val senseids: List<IWordID> = idx.wordIDs
+                for (senseid in senseids)  // synset id, sense number, and lemma
                 {
-                    IIndexWord idx = it.next();
-                    String lemma = idx.getLemma();
-                    if (f != null)
-                    {
-                        f.accept(lemma);
+                    val sense = dict.getWord(senseid)
+                    if (sense == null) {
+                        System.err.printf("⚠ senseid: %s ➜ null sense", senseid.toString())
+                        //val sense2: IWord = dict.getWord(senseid);
+                        continue
                     }
-                }
-                catch (Exception e)
-                {
-                    System.err.println(it + " " + e.getMessage());
+                    f?.accept(sense)
                 }
             }
         }
     }
 
-    public void forAllSenses(final Consumer<IWord> f)
-    {
-        for (final POS pos : POS.values())
-        {
-            Iterator<IIndexWord> it = this.dict.getIndexWordIterator(pos);
-            while (it.hasNext())
-            {
-                IIndexWord idx = it.next();
-                final List<IWordID> senseids = idx.getWordIDs();
-                for (final IWordID senseid : senseids) // synset id, sense number, and lemma
-                {
-                    IWord sense = this.dict.getWord(senseid);
-                    if (sense == null)
+    fun tryForAllSenses(f: Consumer<IWord>?) {
+        for (pos in POS.entries) {
+            val it: Iterator<IIndexWord> = dict.getIndexWordIterator(pos)
+            while (it.hasNext()) {
+                try {
+                    val idx = it.next()
+                    val senseids: List<IWordID> = idx.wordIDs
+                    for (senseid in senseids)  // synset id, sense number, and lemma
                     {
-                        System.err.printf("⚠ senseid: %s ➜ null sense", senseid.toString());
-                        //IWord sense2 = this.dict.getWord(senseid);
-                        continue;
-                    }
-                    if (f != null)
-                    {
-                        f.accept(sense);
-                    }
-                }
-            }
-        }
-    }
-
-    public void tryForAllSenses(final Consumer<IWord> f)
-    {
-        for (final POS pos : POS.values())
-        {
-            Iterator<IIndexWord> it = this.dict.getIndexWordIterator(pos);
-            while (it.hasNext())
-            {
-                try
-                {
-                    IIndexWord idx = it.next();
-                    final List<IWordID> senseids = idx.getWordIDs();
-                    for (final IWordID senseid : senseids) // synset id, sense number, and lemma
-                    {
-                        IWord sense = this.dict.getWord(senseid);
-                        if (sense == null)
-                        {
-                            System.err.printf("⚠ senseid: %s ➜ null sense", senseid.toString());
-                            //IWord sense2 = this.dict.getWord(senseid);
-                            continue;
+                        val sense = dict.getWord(senseid)
+                        if (sense == null) {
+                            System.err.printf("⚠ senseid: %s ➜ null sense", senseid.toString())
+                            //val sense2: IWord = dict.getWord(senseid)
+                            continue
                         }
-                        if (f != null)
-                        {
-                            f.accept(sense);
-                        }
+                        f?.accept(sense)
                     }
-                }
-                catch (Exception e)
-                {
-                    System.err.println(it + " " + e.getMessage());
+                } catch (e: Exception) {
+                    System.err.println(it.toString() + " " + e.message)
                 }
             }
         }
     }
 
-    public void forAllSynsets(final Consumer<ISynset> f)
-    {
-        for (final POS pos : POS.values())
-        {
-            Iterator<ISynset> it = this.dict.getSynsetIterator(pos);
-            while (it.hasNext())
-            {
-                ISynset synset = it.next();
-                if (f != null)
-                {
-                    f.accept(synset);
+    fun forAllSynsets(f: Consumer<ISynset>?) {
+        for (pos in POS.entries) {
+            val it: Iterator<ISynset> = dict.getSynsetIterator(pos)
+            while (it.hasNext()) {
+                val synset: ISynset = it.next()
+                f?.accept(synset)
+            }
+        }
+    }
+
+    fun tryForAllSynsets(f: Consumer<ISynset>?) {
+        for (pos in POS.entries) {
+            val it: Iterator<ISynset> = dict.getSynsetIterator(pos)
+            while (it.hasNext()) {
+                try {
+                    val synset: ISynset = it.next()
+                    f?.accept(synset)
+                } catch (e: Exception) {
+                    System.err.println(it.toString() + " " + e.message)
                 }
             }
         }
     }
 
-    public void tryForAllSynsets(final Consumer<ISynset> f)
-    {
-        for (final POS pos : POS.values())
-        {
-            Iterator<ISynset> it = this.dict.getSynsetIterator(pos);
-            while (it.hasNext())
-            {
-                try
-                {
-                    ISynset synset = it.next();
-                    if (f != null)
-                    {
-                        f.accept(synset);
-                    }
-                }
-                catch (Exception e)
-                {
-                    System.err.println(it + " " + e.getMessage());
-                }
-            }
+    fun forAllSenseEntries(f: Consumer<ISenseEntry>?) {
+        val it: Iterator<ISenseEntry> = dict.getSenseEntryIterator()
+        while (it.hasNext()) {
+            val entry = it.next()
+            f?.accept(entry)
         }
     }
 
-    public void forAllSenseEntries(final Consumer<ISenseEntry> f)
-    {
-        Iterator<ISenseEntry> it = this.dict.getSenseEntryIterator();
-        while (it.hasNext())
-        {
-            ISenseEntry entry = it.next();
-            if (f != null)
-            {
-                f.accept(entry);
-            }
-        }
-    }
-
-    public void tryForAllSenseEntries(final Consumer<ISenseEntry> f)
-    {
-        Iterator<ISenseEntry> it = this.dict.getSenseEntryIterator();
-        while (it.hasNext())
-        {
-            try
-            {
-                ISenseEntry entry = it.next();
-                if (f != null)
-                {
-                    f.accept(entry);
-                }
-            }
-            catch (Exception e)
-            {
-                System.err.println(it + " " + e.getMessage());
+    fun tryForAllSenseEntries(f: Consumer<ISenseEntry>?) {
+        val it: Iterator<ISenseEntry> = dict.getSenseEntryIterator()
+        while (it.hasNext()) {
+            try {
+                val entry = it.next()
+                f?.accept(entry)
+            } catch (e: Exception) {
+                System.err.println(it.toString() + " " + e.message)
             }
         }
     }
 
     // S P E C I F I C   I T E R A T I O N S
+    
+    fun forAllSynsetRelations(f: Consumer<ISynset>?) {
+        for (pos in POS.entries) {
+            val it: Iterator<ISynset> = dict.getSynsetIterator(pos)
+            while (it.hasNext()) {
+                val synset = it.next()
+                val relatedIds: List<ISynsetID> = synset.relatedSynsets
+                for (relatedId in relatedIds) {
+                    val related = dict.getSynset(relatedId)!!
+                    f?.accept(related)
+                }
+            }
+        }
+    }
 
-    public void forAllSynsetRelations(final Consumer<ISynset> f)
-    {
-        for (final POS pos : POS.values())
-        {
-            Iterator<ISynset> it = this.dict.getSynsetIterator(pos);
-            while (it.hasNext())
-            {
-                ISynset synset = it.next();
-                List<ISynsetID> relatedIds = synset.getRelatedSynsets();
-                for (ISynsetID relatedId : relatedIds)
+    fun tryForAllSynsetRelations(f: Consumer<ISynset>?) {
+        for (pos in POS.entries) {
+            val it: Iterator<ISynset> = dict.getSynsetIterator(pos)
+            while (it.hasNext()) {
+                try {
+                    val synset = it.next()
+                    val relatedIds: List<ISynsetID> = synset.relatedSynsets
+                    for (relatedId in relatedIds) {
+                        try {
+                            val related = dict.getSynset(relatedId)!!
+                            f?.accept(related)
+                        } catch (e: Exception) {
+                            System.err.println(relatedId.toString() + " " + e.message)
+                        }
+                    }
+                } catch (e: Exception) {
+                    System.err.println(it.toString() + " " + e.message)
+                }
+            }
+        }
+    }
+
+    fun forAllSenseRelations(f: Consumer<IWord>?) {
+        for (pos in POS.entries) {
+            val it: Iterator<IIndexWord> = dict.getIndexWordIterator(pos)
+            while (it.hasNext()) {
+                val idx = it.next()
+                val senseids: List<IWordID> = idx.wordIDs
+                for (senseid in senseids)  // synset id, sense number, and lemma
                 {
-                    ISynset related = this.dict.getSynset(relatedId);
-                    if (f != null)
-                    {
-                        f.accept(related);
+                    val sense = dict.getWord(senseid)
+                    if (sense == null) {
+                        System.err.printf("⚠ senseid: %s ➜ null sense", senseid.toString())
+                        //val sense2: IWord = dict.getWord(senseid)
+                        continue
+                    }
+                    val relatedIds: List<IWordID>? = sense.relatedWords
+                    for (relatedId in relatedIds!!) {
+                        val related = dict.getWord(relatedId)!!
+                        f?.accept(related)
                     }
                 }
             }
         }
     }
 
-    public void tryForAllSynsetRelations(final Consumer<ISynset> f)
-    {
-        for (final POS pos : POS.values())
-        {
-            Iterator<ISynset> it = this.dict.getSynsetIterator(pos);
-            while (it.hasNext())
-            {
-                try
+    fun tryForAllSenseRelations(f: Consumer<IWord>?) {
+        for (pos in POS.entries) {
+            val it: Iterator<IIndexWord> = dict.getIndexWordIterator(pos)
+            while (it.hasNext()) {
+                val idx = it.next()
+                val senseids: List<IWordID> = idx.wordIDs
+                for (senseid in senseids)  // synset id, sense number, and lemma
                 {
-                    ISynset synset = it.next();
-                    List<ISynsetID> relatedIds = synset.getRelatedSynsets();
-                    for (ISynsetID relatedId : relatedIds)
-                    {
-                        try
-                        {
-                            ISynset related = this.dict.getSynset(relatedId);
-                            if (f != null)
-                            {
-                                f.accept(related);
-                            }
+                    try {
+                        val sense = dict.getWord(senseid)
+                        if (sense == null) {
+                            System.err.printf("⚠ senseid: %s ➜ null sense", senseid.toString())
+                            //val sense2: IWord = dict.getWord(senseid)
+                            continue
                         }
-                        catch (Exception e)
-                        {
-                            System.err.println(relatedId + " " + e.getMessage());
+                        val relatedIds: List<IWordID>? = sense.relatedWords
+                        for (relatedId in relatedIds!!) {
+                            val related = dict.getWord(relatedId)!!
+                            f?.accept(related)
                         }
-                    }
-                }
-                catch (Exception e)
-                {
-                    System.err.println(it + " " + e.getMessage());
-                }
-            }
-        }
-    }
-
-    public void forAllSenseRelations(final Consumer<IWord> f)
-    {
-        for (final POS pos : POS.values())
-        {
-            Iterator<IIndexWord> it = this.dict.getIndexWordIterator(pos);
-            while (it.hasNext())
-            {
-                IIndexWord idx = it.next();
-                final List<IWordID> senseids = idx.getWordIDs();
-                for (final IWordID senseid : senseids) // synset id, sense number, and lemma
-                {
-                    IWord sense = this.dict.getWord(senseid);
-                    if (sense == null)
-                    {
-                        System.err.printf("⚠ senseid: %s ➜ null sense", senseid.toString());
-                        //IWord sense2 = this.dict.getWord(senseid);
-                        continue;
-                    }
-                    List<IWordID> relatedIds = sense.getRelatedWords();
-                    for (IWordID relatedId : relatedIds)
-                    {
-                        IWord related = this.dict.getWord(relatedId);
-                        if (f != null)
-                        {
-                            f.accept(related);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    public void tryForAllSenseRelations(final Consumer<IWord> f)
-    {
-        for (final POS pos : POS.values())
-        {
-            Iterator<IIndexWord> it = this.dict.getIndexWordIterator(pos);
-            while (it.hasNext())
-            {
-                IIndexWord idx = it.next();
-                final List<IWordID> senseids = idx.getWordIDs();
-                for (final IWordID senseid : senseids) // synset id, sense number, and lemma
-                {
-                    try
-                    {
-                        IWord sense = this.dict.getWord(senseid);
-                        if (sense == null)
-                        {
-                            System.err.printf("⚠ senseid: %s ➜ null sense", senseid.toString());
-                            //IWord sense2 = this.dict.getWord(senseid);
-                            continue;
-                        }
-                        List<IWordID> relatedIds = sense.getRelatedWords();
-                        for (IWordID relatedId : relatedIds)
-                        {
-                            IWord related = this.dict.getWord(relatedId);
-                            if (f != null)
-                            {
-                                f.accept(related);
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        System.err.println(senseid + " " + e.getMessage());
+                    } catch (e: Exception) {
+                        System.err.println(senseid.toString() + " " + e.message)
                     }
                 }
             }
@@ -358,102 +241,73 @@ public class JWI
 
     // S E N S E   E X P L O R A T I O N
 
-    public void forAllSenseIDs(final String lemma, final Consumer<IWordID> f)
-    {
-        for (final POS pos : POS.values())
-        {
-            final IIndexWord idx = this.dict.getIndexWord(lemma, pos);
-            if (idx != null)
-            {
-                final List<IWordID> senseids = idx.getWordIDs();
-                for (final IWordID senseid : senseids) // synset id, sense number, and lemma
+    fun forAllSenseIDs(lemma: String, f: Consumer<IWordID>?) {
+        for (pos in POS.entries) {
+            val idx = dict.getIndexWord(lemma, pos)
+            if (idx != null) {
+                val senseids: List<IWordID> = idx.wordIDs
+                for (senseid in senseids)  // synset id, sense number, and lemma
                 {
-                    if (f != null)
-                    {
-                        f.accept(senseid);
-                    }
+                    f?.accept(senseid)
                 }
             }
         }
     }
 
-    public void forAllSenses(final String lemma, final Consumer<IWord> f)
-    {
-        for (final POS pos : POS.values())
-        {
-            final IIndexWord idx = this.dict.getIndexWord(lemma, pos);
-            if (idx != null)
-            {
-                final List<IWordID> senseids = idx.getWordIDs();
-                for (final IWordID senseid : senseids) // synset id, sense number, and lemma
+    fun forAllSenses(lemma: String, f: Consumer<IWord?>?) {
+        for (pos in POS.entries) {
+            val idx = dict.getIndexWord(lemma, pos)
+            if (idx != null) {
+                val senseids: List<IWordID> = idx.wordIDs
+                for (senseid in senseids)  // synset id, sense number, and lemma
                 {
-                    IWord sense = this.dict.getWord(senseid);
-                    if (f != null)
-                    {
-                        f.accept(sense);
-                    }
+                    val sense = dict.getWord(senseid)
+                    f?.accept(sense)
                 }
             }
         }
     }
 
-    public void forAllSensekeys(final Consumer<ISenseKey> f)
-    {
-        for (final POS pos : POS.values())
-        {
-            Iterator<IIndexWord> it = this.dict.getIndexWordIterator(pos);
-            while (it.hasNext())
-            {
-                IIndexWord idx = it.next();
-                final List<IWordID> senseids = idx.getWordIDs();
-                for (final IWordID senseid : senseids) // synset id, sense number, and lemma
+    fun forAllSensekeys(f: Consumer<ISenseKey>?) {
+        for (pos in POS.entries) {
+            val it: Iterator<IIndexWord> = dict.getIndexWordIterator(pos)
+            while (it.hasNext()) {
+                val idx = it.next()
+                val senseids: List<IWordID> = idx.wordIDs
+                for (senseid in senseids)  // synset id, sense number, and lemma
                 {
-                    IWord sense = this.dict.getWord(senseid);
-                    if (sense == null)
-                    {
-                        System.err.printf("⚠ senseid: %s ➜ null sense", senseid.toString());
-                        //IWord sense2 = this.dict.getWord(senseid);
-                        continue;
+                    val sense = dict.getWord(senseid)
+                    if (sense == null) {
+                        System.err.printf("⚠ senseid: %s ➜ null sense", senseid.toString())
+                        //val sense2: IWord = dict.getWord(senseid)
+                        continue
                     }
-                    ISenseKey sensekey = sense.getSenseKey();
-                    if (f != null)
-                    {
-                        f.accept(sensekey);
-                    }
+                    val sensekey = sense.senseKey
+                    f?.accept(sensekey)
                 }
             }
         }
     }
 
-    public void tryForAllSensekeys(final Consumer<ISenseKey> f)
-    {
-        for (final POS pos : POS.values())
-        {
-            Iterator<IIndexWord> it = this.dict.getIndexWordIterator(pos);
-            while (it.hasNext())
-            {
-                IIndexWord idx = it.next();
-                final List<IWordID> senseids = idx.getWordIDs();
-                for (final IWordID senseid : senseids) // synset id, sense number, and lemma
+    fun tryForAllSensekeys(f: Consumer<ISenseKey>?) {
+        for (pos in POS.entries) {
+            val it: Iterator<IIndexWord> = dict.getIndexWordIterator(pos)
+            while (it.hasNext()) {
+                val idx = it.next()
+                val senseids: List<IWordID> = idx.wordIDs
+                for (senseid in senseids)  // synset id, sense number, and lemma
                 {
-                    try
-                    {
-                        IWord sense = this.dict.getWord(senseid);
-                        if (sense == null)
-                        {
-                            System.err.printf("⚠ senseid: %s ➜ null sense", senseid.toString());
-                            //IWord sense2 = this.dict.getWord(senseid);
-                            continue;
+                    try {
+                        val sense = dict.getWord(senseid)
+                        if (sense == null) {
+                            System.err.printf("⚠ senseid: %s ➜ null sense", senseid.toString())
+                            //val sense2: IWord = dict.getWord(senseid);
+                            continue
                         }
-                        ISenseKey sensekey = sense.getSenseKey();
-                        if (f != null)
-                        {
-                            f.accept(sensekey);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        System.err.println(senseid + " " + e.getMessage());
+                        val sensekey = sense.senseKey
+                        f?.accept(sensekey)
+                    } catch (e: Exception) {
+                        System.err.println(senseid.toString() + " " + e.message)
                     }
                 }
             }
@@ -461,219 +315,178 @@ public class JWI
     }
 
     // T R E E   E X P L O R A T I O N S
-
-    public void walk(final String lemma, final PrintStream ps)
-    {
-        for (final POS pos : POS.values())
-        {
-            walk(lemma, pos, ps);
+    fun walk(lemma: String, ps: PrintStream) {
+        for (pos in POS.entries) {
+            walk(lemma, pos, ps)
         }
     }
 
-    public void walk(final String lemma, final POS pos, final PrintStream ps)
-    {
+    fun walk(lemma: String, pos: POS, ps: PrintStream) {
         // a line in an index file
-        final IIndexWord idx = this.dict.getIndexWord(lemma, pos);
-        if (idx != null)
-        {
+        val idx = dict.getIndexWord(lemma, pos)
+        if (idx != null) {
             // index
-            ps.println();
-            ps.println("================================================================================");
-            ps.println("■ pos = " + pos.name());
+            ps.println()
+            ps.println("================================================================================")
+            ps.println("■ pos = " + pos.name)
             // ps.println("lemma = " + idx.getLemma());
-            walk(idx, ps);
+            walk(idx, ps)
         }
     }
 
-    public void walk(final IIndexWord idx, final PrintStream ps)
-    {
-        Set<IPointer> pointers = idx.getPointers();
-        for (IPointer ptr : pointers)
-        {
-            ps.println("has relation = " + ptr.toString());
+    fun walk(idx: IIndexWord, ps: PrintStream) {
+        val pointers: Set<IPointer> = idx.pointers
+        for (ptr in pointers) {
+            ps.println("has relation = $ptr")
         }
 
         // senseid=(lemma, synsetid, sensenum)
-        final List<IWordID> senseids = idx.getWordIDs();
-        for (final IWordID senseid : senseids) // synset id, sense number, and lemma
+        val senseids: List<IWordID> = idx.wordIDs
+        for (senseid in senseids)  // synset id, sense number, and lemma
         {
-            walk(senseid, ps);
+            walk(senseid, ps)
         }
     }
 
-    public void walk(final IWordID senseid, final PrintStream ps)
-    {
-        ps.println("--------------------------------------------------------------------------------");
+    fun walk(senseid: IWordID, ps: PrintStream) {
+        ps.println("--------------------------------------------------------------------------------")
+
         //ps.println("senseid = " + senseid.toString());
 
         // sense=(senseid, lexid, sensekey, synset)
-        IWord sense = this.dict.getWord(senseid);
-        walk(sense, ps);
+        val sense = dict.getWord(senseid)
+        walk(sense!!, ps)
 
         // synset
-        final ISynsetID synsetid = senseid.getSynsetID();
-        final ISynset synset = this.dict.getSynset(synsetid);
-        ps.printf("● synset = %s%n", toString(synset));
+        val synsetid = senseid.synsetID
+        val synset = dict.getSynset(synsetid)
+        ps.printf("● synset = %s%n", toString(synset!!))
 
-        walk(synset, 1, ps);
+        walk(synset, 1, ps)
     }
 
-    public void walk(final IWord sense, final PrintStream ps)
-    {
-        ps.printf("● sense: %s lexid: %d sensekey: %s%n", sense.toString(), sense.getLexicalID(), sense.getSenseKey());
+    fun walk(sense: IWord, ps: PrintStream) {
+        ps.printf("● sense: %s lexid: %d sensekey: %s%n", sense.toString(), sense.lexicalID, sense.senseKey)
 
         // adj marker
-        AdjMarker marker = sense.getAdjectiveMarker();
-        if (marker != null)
-        {
-            ps.println("  marker = " + marker);
+        val marker = sense.adjectiveMarker
+        if (marker != null) {
+            ps.println("  marker = $marker")
         }
 
         // sensekey
-        ISenseKey senseKey = sense.getSenseKey();
-        ISenseEntry senseEntry = this.dict.getSenseEntry(senseKey);
-        if (senseEntry == null)
-        {
-            System.err.printf("⚠ Missing sensekey %s for sense at offset %d with pos %s%n", senseKey.toString(), sense.getSynset().getOffset(), sense.getPOS().toString());
+        val senseKey = sense.senseKey
+        val senseEntry = dict.getSenseEntry(senseKey)
+        if (senseEntry == null) {
+            System.err.printf("⚠ Missing sensekey %s for sense at offset %d with pos %s%n", senseKey.toString(), sense.synset.offset, sense.pOS.toString())
             // throw new IllegalArgumentException(String.format("%s at offset %d with pos %s%n", senseKey.toString(), sense.getSynset().getOffset(),sense.getPOS().toString()));
         }
 
         // lexical relations
-        Map<IPointer, List<IWordID>> relatedMap = sense.getRelatedMap();
-        walk(relatedMap, ps);
+        val relatedMap: Map<IPointer, List<IWordID>> = sense.relatedMap
+        walk(relatedMap, ps)
 
         // verb frames
-        List<IVerbFrame> verbFrames = sense.getVerbFrames();
-        walk(verbFrames, sense.getLemma(), ps);
+        val verbFrames: List<IVerbFrame>? = sense.verbFrames
+        walk(verbFrames, sense.lemma, ps)
 
-        ps.printf("  sensenum: %s tag cnt:%s%n", senseEntry == null ? "<missing>" : senseEntry.getSenseNumber(), senseEntry == null ? "<missing>" : senseEntry.getTagCount());
+        ps.printf("  sensenum: %s tag cnt:%s%n", senseEntry?.senseNumber ?: "<missing>", senseEntry?.tagCount ?: "<missing>")
     }
 
-    public void walk(final Map<IPointer, List<IWordID>> relatedMap, final PrintStream ps)
-    {
-        if (relatedMap != null)
-        {
-            for (Map.Entry<IPointer, List<IWordID>> entry : relatedMap.entrySet())
-            {
-                IPointer pointer = entry.getKey();
-                for (IWordID relatedId : entry.getValue())
-                {
-                    IWord related = this.dict.getWord(relatedId);
-                    ps.printf("  related %s lemma:%s synset:%s%n", pointer, related.getLemma(), related.getSynset().toString());
+    fun walk(relatedMap: Map<IPointer, List<IWordID>>, ps: PrintStream) {
+            for (entry in relatedMap.entries) {
+                val pointer = entry.key
+                for (relatedId in entry.value) {
+                    val related = dict.getWord(relatedId)
+                    ps.printf("  related %s lemma:%s synset:%s%n", pointer, related!!.lemma, related.synset.toString())
                 }
             }
-        }
     }
 
-    public void walk(final List<IVerbFrame> verbFrames, final String lemma, final PrintStream ps)
-    {
-        if (verbFrames != null)
-        {
-            for (IVerbFrame verbFrame : verbFrames)
-            {
-                ps.printf("  verb frame: %s : %s%n", verbFrame.getTemplate(), verbFrame.instantiateTemplate(lemma));
+    fun walk(verbFrames: List<IVerbFrame>?, lemma: String, ps: PrintStream) {
+        if (verbFrames != null) {
+            for (verbFrame in verbFrames) {
+                ps.printf("  verb frame: %s : %s%n", verbFrame.template, verbFrame.instantiateTemplate(lemma))
             }
         }
     }
 
-    public void walk(final ISynset synset, final int level, final PrintStream ps)
-    {
-        final String indentSpace = new String(new char[level]).replace('\0', '\t');
-        final Map<IPointer, List<ISynsetID>> links = synset.getRelatedMap();
-        for (final IPointer p : links.keySet())
-        {
-            ps.printf("%s🡆 %s%n", indentSpace, p.getName());
-            final List<ISynsetID> relations2 = links.get(p);
-            walk(relations2, p, level, ps);
+    fun walk(synset: ISynset, level: Int, ps: PrintStream) {
+        val indentSpace = String(CharArray(level)).replace('\u0000', '\t')
+        val links: Map<IPointer, List<ISynsetID>> = synset.relatedMap
+        for (p in links.keys) {
+            ps.printf("%s🡆 %s%n", indentSpace, p.name)
+            val relations2: List<ISynsetID> = links[p]!!
+            walk(relations2, p, level, ps)
         }
     }
 
-    public void walk(final List<ISynsetID> relations2, final IPointer p, final int level, final PrintStream ps)
-    {
-        final String indentSpace = new String(new char[level]).replace('\0', '\t');
-        for (final ISynsetID synsetid2 : relations2)
-        {
-            final ISynset synset2 = this.dict.getSynset(synsetid2);
-            ps.printf("%s%s%n", indentSpace, toString(synset2));
+    fun walk(relations2: List<ISynsetID>, p: IPointer, level: Int, ps: PrintStream) {
+        val indentSpace = String(CharArray(level)).replace('\u0000', '\t')
+        for (synsetid2 in relations2) {
+            val synset2 = dict.getSynset(synsetid2)
+            ps.printf("%s%s%n", indentSpace, toString(synset2!!))
 
-            walk(synset2, p, level + 1, ps);
+            walk(synset2, p, level + 1, ps)
         }
     }
 
-    public void walk(final ISynset synset, final IPointer p, final int level, final PrintStream ps)
-    {
-        final String indentSpace = new String(new char[level]).replace('\0', '\t');
-        final List<ISynsetID> relations2 = synset.getRelatedSynsets(p);
-        for (final ISynsetID synsetid2 : relations2)
-        {
-            final ISynset synset2 = this.dict.getSynset(synsetid2);
-            ps.printf("%s%s%n", indentSpace, toString(synset2));
-            if (canRecurse(p))
-            {
-                walk(synset2, p, level + 1, ps);
+    fun walk(synset: ISynset, p: IPointer, level: Int, ps: PrintStream) {
+        val indentSpace = String(CharArray(level)).replace('\u0000', '\t')
+        val relations2: List<ISynsetID> = synset.getRelatedSynsets(p)
+        for (synsetid2 in relations2) {
+            val synset2 = dict.getSynset(synsetid2)
+            ps.printf("%s%s%n", indentSpace, toString(synset2!!))
+            if (canRecurse(p)) {
+                walk(synset2, p, level + 1, ps)
             }
         }
     }
 
-    // H E L P E R S
+    companion object {
 
-    public static String toString(final ISynset synset)
-    {
-        return getMembers(synset) + synset.getGloss();
-    }
-
-    public static String getMembers(final ISynset synset)
-    {
-        final StringBuilder sb = new StringBuilder();
-        sb.append('{');
-        boolean first = true;
-        for (final IWord sense : synset.getWords())
-        {
-            if (first)
-            {
-                first = false;
-            }
-            else
-            {
-                sb.append(' ');
-            }
-            sb.append(sense.getLemma());
+        // H E L P E R S
+        fun toString(synset: ISynset): String {
+            return getMembers(synset) + synset.gloss
         }
-        sb.append('}');
-        sb.append(' ');
-        return sb.toString();
-    }
 
-    private static boolean canRecurse(IPointer p)
-    {
-        String symbol = p.getSymbol();
-        switch (symbol)
-        {
-            case "@": // hypernym
-            case "~": // hyponym
-            case "%p": // part holonym
-            case "#p": // part meronym
-            case "%m": // member holonym
-            case "#m": // member meronym
-            case "%s": // substance holonym
-            case "#s": // substance meronym
-            case "*": // entail
-            case ">": // cause
-                return true;
+        fun getMembers(synset: ISynset): String {
+            val sb = StringBuilder()
+            sb.append('{')
+            var first = true
+            for (sense in synset.words) {
+                if (first) {
+                    first = false
+                } else {
+                    sb.append(' ')
+                }
+                sb.append(sense.lemma)
+            }
+            sb.append('}')
+            sb.append(' ')
+            return sb.toString()
         }
-        return false;
-    }
 
-    /**
-     * Main
-     *
-     * @param args arguments
-     * @throws IOException io exception
-     */
-    public static void main(final String[] args) throws IOException
-    {
-        final String wnHome = args[0];
-        final String lemma = args[1];
-        new JWI(wnHome, null).walk(lemma, System.out);
+        private fun canRecurse(p: IPointer): Boolean {
+            val symbol = p.symbol
+            when (symbol) {
+                "@", "~", "%p", "#p", "%m", "#m", "%s", "#s", "*", ">" -> return true
+            }
+            return false
+        }
+
+        /**
+         * Main
+         *
+         * @param args arguments
+         * @throws IOException io exception
+         */
+        @Throws(IOException::class)
+        @JvmStatic
+        fun main(args: Array<String>) {
+            val wnHome = args[0]
+            val lemma = args[1]
+            JWI(wnHome, null).walk(lemma, System.out)
+        }
     }
 }
