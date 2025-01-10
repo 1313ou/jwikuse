@@ -1,49 +1,47 @@
-package org.jwi.use;
+package org.jwi.use
 
-import edu.mit.jwi.item.IIndexWord;
-import edu.mit.jwi.item.POS;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import edu.mit.jwi.item.IIndexWord
+import edu.mit.jwi.item.POS
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
+import java.io.IOException
+import java.io.OutputStream
+import java.io.PrintStream
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-
-public class JWIWordsTests
-{
-    private static final boolean VERBOSE = !System.getProperties().containsKey("SILENT");
-
-    private static final PrintStream PS = VERBOSE ? System.out : new PrintStream(new OutputStream()
-    {
-        public void write(int b)
-        {
-            //DO NOTHING
-        }
-    });
-
-    private static String word;
-
-    private static JWI jwi;
-
-    @BeforeAll
-    public static void init() throws IOException
-    {
-        word = System.getProperty("WORD");
-        String wnHome = System.getProperty("SOURCE");
-        jwi = new JWI(wnHome);
-    }
+class JWIWordsTests {
 
     @Test
-    public void searchWord()
-    {
-        for (final POS pos : POS.values())
-        {
-            IIndexWord index = jwi.dict.getIndexWord(word, pos);
-            if (index != null)
-            {
-                String lemma = index.getLemma();
-                PS.println(pos + " " + lemma);
+    fun searchWord() {
+        for (pos in POS.entries) {
+            val index: IIndexWord? = jwi!!.dict.getIndexWord(word!!, pos)
+            if (index != null) {
+                val lemma = index.lemma
+                PS.println("$pos $lemma")
             }
+        }
+    }
+
+    companion object {
+
+        private val VERBOSE = !System.getProperties().containsKey("SILENT")
+
+        private val PS: PrintStream = if (VERBOSE) System.out else PrintStream(object : OutputStream() {
+            override fun write(b: Int) {
+                //DO NOTHING
+            }
+        })
+
+        private var word: String? = null
+
+        private var jwi: JWI? = null
+
+        @JvmStatic
+        @BeforeAll
+        @Throws(IOException::class)
+        fun init() {
+            word = System.getProperty("WORD")
+            val wnHome = System.getProperty("SOURCE")
+            jwi = JWI(wnHome)
         }
     }
 }

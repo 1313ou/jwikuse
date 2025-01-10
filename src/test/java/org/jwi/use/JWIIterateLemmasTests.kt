@@ -1,57 +1,53 @@
-package org.jwi.use;
+package org.jwi.use
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
+import java.io.IOException
+import java.io.OutputStream
+import java.io.PrintStream
+import java.util.*
+import java.util.function.Consumer
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+class JWIIterateLemmasTests {
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-public class JWIIterateLemmasTests
-{
-    private static final boolean VERBOSE = !System.getProperties().containsKey("SILENT");
-
-    private static final PrintStream PS = VERBOSE ? System.out : new PrintStream(new OutputStream()
-    {
-        public void write(int b)
-        {
-            //DO NOTHING
-        }
-    });
-
-    private static JWI jwi;
-
-    @BeforeAll
-    public static void init() throws IOException
-    {
-        String wnHome = System.getProperty("SOURCE");
-        jwi = new JWI(wnHome);
+    @Test
+    fun iterateLemmas() {
+        jwi!!.forAllLemmas(Consumer { x: String? -> PS.println(x) })
     }
 
     @Test
-    public void iterateLemmas()
-    {
-        jwi.forAllLemmas(PS::println);
-    }
+    fun searchLemmas() {
+        val start = System.getProperty("TARGET")
+        val actual: Set<String> = jwi!!.dict.getWords(start, null, 0)
 
-    @Test
-    public void searchLemmas()
-    {
-        String start = System.getProperty("TARGET");
-        Set<String> actual = jwi.dict.getWords(start, null, 0);
-
-        Set<String> expected = new TreeSet<>();
-        jwi.forAllLemmas((w) -> {
-            if (w.startsWith(start))
-            {
-                expected.add(w);
+        val expected: MutableSet<String?> = TreeSet<String?>()
+        jwi!!.forAllLemmas(Consumer { w: String? ->
+            if (w!!.startsWith(start)) {
+                expected.add(w)
             }
-        });
-        assertEquals(expected, actual);
+        })
+        Assertions.assertEquals(expected, actual)
+    }
+
+    companion object {
+
+        private val VERBOSE = !System.getProperties().containsKey("SILENT")
+
+        private val PS: PrintStream = if (VERBOSE) System.out else PrintStream(object : OutputStream() {
+            override fun write(b: Int) {
+                //DO NOTHING
+            }
+        })
+
+        private var jwi: JWI? = null
+
+        @JvmStatic
+        @BeforeAll
+        @Throws(IOException::class)
+        fun init() {
+            val wnHome = System.getProperty("SOURCE")
+            jwi = JWI(wnHome)
+        }
     }
 }
