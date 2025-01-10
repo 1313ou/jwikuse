@@ -150,7 +150,7 @@ class JWI
     }
 
     // S P E C I F I C   I T E R A T I O N S
-    
+
     fun forAllSynsetRelations(f: Consumer<ISynset>?) {
         for (pos in POS.entries) {
             val it: Iterator<ISynset> = dict.getSynsetIterator(pos)
@@ -394,13 +394,13 @@ class JWI
     }
 
     fun walk(relatedMap: Map<IPointer, List<IWordID>>, ps: PrintStream) {
-            for (entry in relatedMap.entries) {
-                val pointer = entry.key
-                for (relatedId in entry.value) {
-                    val related = dict.getWord(relatedId)
-                    ps.printf("  related %s lemma:%s synset:%s%n", pointer, related!!.lemma, related.synset.toString())
-                }
+        for (entry in relatedMap.entries) {
+            val pointer = entry.key
+            for (relatedId in entry.value) {
+                val related = dict.getWord(relatedId)
+                ps.printf("  related %s lemma:%s synset:%s%n", pointer, related!!.lemma, related.synset.toString())
             }
+        }
     }
 
     fun walk(verbFrames: List<IVerbFrame>?, lemma: String, ps: PrintStream) {
