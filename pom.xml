@@ -7,8 +7,8 @@
   <packaging>jar</packaging>
   <version>2.4.1.1</version>
 
-  <name>Java WordNet Extended Interface Utils</name>
-  <description>Java library utils for JWI</description>
+  <name>Java WordNet Interface Utils in Kotlin</name>
+  <description>Java library utils for JWI in Kotlin</description>
   <url>https://github.com/x-englishwordnet/jwiuse</url>
 
   <properties>
@@ -117,6 +117,7 @@
             <WORD>love</WORD>
             <TARGET>arb</TARGET>
             <SILENT/>
+            <ABRACADABRA/>
           </systemPropertyVariables>
         </configuration>
       </plugin>

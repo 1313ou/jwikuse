@@ -1,44 +1,44 @@
-package org.jwi.use;
+package org.jwi.use
 
-import edu.mit.jwi.Config;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
+import java.io.IOException
+import java.io.OutputStream
+import java.io.PrintStream
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.nio.charset.Charset;
-
-public class JWITests
-{
-    private static final boolean VERBOSE = !System.getProperties().containsKey("SILENT");
-
-    private static final PrintStream PS = VERBOSE ? System.out : new PrintStream(new OutputStream()
-    {
-        public void write(int b)
-        {
-            //DO NOTHING
-        }
-    });
-
-    private static String word;
-
-    private static JWI jwi;
-
-    @BeforeAll
-    public static void init() throws IOException
-    {
-        word = System.getProperty("WORD");
-        String wnHome = System.getProperty("SOURCE");
-		// Config config = new Config();
-		// config.charSet = Charset.defaultCharset();
-	    // jwi = new JWI(wnHome, config);
-	    jwi = new JWI(wnHome);
-    }
+class JWITests {
 
     @Test
-    public void walkWord()
-    {
-        jwi.walk(word, PS);
+    fun walkWord() {
+        jwi!!.walk(word!!, PS)
+    }
+
+    companion object {
+
+        private val PROPS = System.getProperties()
+
+        private val VERBOSE = true // TODO !System.getProperties().containsKey("SILENT")
+
+        private val PS: PrintStream = if (VERBOSE) System.out else PrintStream(object : OutputStream() {
+            override fun write(b: Int) {
+                //DO NOTHING
+            }
+        })
+
+        private var word: String? = null
+
+        private var jwi: JWI? = null
+
+        @JvmStatic
+        @BeforeAll
+        @Throws(IOException::class)
+        fun init() {
+            word = System.getProperty("WORD")
+            val wnHome = System.getProperty("SOURCE")
+            // val config: Config = Config()
+            // config.charSet = Charset.defaultCharset()
+            // jwi = JWI(wnHome, config)
+            jwi = JWI(wnHome)
+        }
     }
 }
