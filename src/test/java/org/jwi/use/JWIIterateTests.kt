@@ -1,6 +1,6 @@
 package org.jwi.use
 
-import edu.mit.jwi.item.ISenseEntry
+import edu.mit.jwi.item.SenseEntry
 import edu.mit.jwi.item.SenseKey
 import edu.mit.jwi.item.Synset
 import edu.mit.jwi.item.Word
@@ -30,7 +30,7 @@ class JWIIterateTests {
 
     @Test
     fun iterateSenseEntries() {
-        jwi!!.forAllSenseEntries(Consumer { se: ISenseEntry -> })
+        jwi!!.forAllSenseEntries(Consumer { se: SenseEntry -> })
     }
 
     @Test

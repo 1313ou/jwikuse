@@ -1,15 +1,15 @@
 package org.jwi.use
 
 import edu.mit.jwi.data.parse.SenseKeyParser.Companion.instance
-import edu.mit.jwi.item.ISenseEntry
+import edu.mit.jwi.item.SenseEntry
 import edu.mit.jwi.item.IWordID
 import java.util.function.Consumer
 
 object Sensekeys {
 
     @JvmStatic
-    fun findSensekeysOf(jwi: JWI, lemma: String): Collection<ISenseEntry> {
-        val result: MutableCollection<ISenseEntry> = ArrayList<ISenseEntry>()
+    fun findSensekeysOf(jwi: JWI, lemma: String): Collection<SenseEntry> {
+        val result: MutableCollection<SenseEntry> = ArrayList<SenseEntry>()
         jwi.forAllSenseIDs(lemma, Consumer { si: IWordID ->
             val sense = jwi.dict.getWord(si)
             val generatedSk = sense!!.senseKey
@@ -21,7 +21,7 @@ object Sensekeys {
     }
 
     @JvmStatic
-    fun lookupSensekey(jwi: JWI, skStr: String): ISenseEntry? {
+    fun lookupSensekey(jwi: JWI, skStr: String): SenseEntry? {
         val parsedSk = instance!!.parseLine(skStr)
         assert(skStr == parsedSk.toString())
         // lookup

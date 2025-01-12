@@ -1,6 +1,6 @@
 package org.jwi.use
 
-import edu.mit.jwi.item.ISenseEntry
+import edu.mit.jwi.item.SenseEntry
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.io.IOException
@@ -22,8 +22,8 @@ class SensekeysCrossTests {
     }
 
     fun findSensekeysOf(lemma: String) {
-        val ses1: Collection<ISenseEntry> = Sensekeys.findSensekeysOf(jwi1!!, lemma)
-        val ses2: Collection<ISenseEntry> = Sensekeys.findSensekeysOf(jwi2!!, lemma)
+        val ses1: Collection<SenseEntry> = Sensekeys.findSensekeysOf(jwi1!!, lemma)
+        val ses2: Collection<SenseEntry> = Sensekeys.findSensekeysOf(jwi2!!, lemma)
         PS.println("\n⯆$lemma")
         for (se in ses1) {
             PS.printf("1 %s %s%n", se.senseKey, se.offset)
