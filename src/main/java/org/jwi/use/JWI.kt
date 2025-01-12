@@ -105,22 +105,22 @@ class JWI
         }
     }
 
-    fun forAllSynsets(f: Consumer<ISynset>?) {
+    fun forAllSynsets(f: Consumer<Synset>?) {
         for (pos in POS.entries) {
-            val it: Iterator<ISynset> = dict.getSynsetIterator(pos)
+            val it: Iterator<Synset> = dict.getSynsetIterator(pos)
             while (it.hasNext()) {
-                val synset: ISynset = it.next()
+                val synset: Synset = it.next()
                 f?.accept(synset)
             }
         }
     }
 
-    fun tryForAllSynsets(f: Consumer<ISynset>?) {
+    fun tryForAllSynsets(f: Consumer<Synset>?) {
         for (pos in POS.entries) {
-            val it: Iterator<ISynset> = dict.getSynsetIterator(pos)
+            val it: Iterator<Synset> = dict.getSynsetIterator(pos)
             while (it.hasNext()) {
                 try {
-                    val synset: ISynset = it.next()
+                    val synset: Synset = it.next()
                     f?.accept(synset)
                 } catch (e: Exception) {
                     System.err.println(it.toString() + " " + e.message)
@@ -151,9 +151,9 @@ class JWI
 
     // S P E C I F I C   I T E R A T I O N S
 
-    fun forAllSynsetRelations(f: Consumer<ISynset>?) {
+    fun forAllSynsetRelations(f: Consumer<Synset>?) {
         for (pos in POS.entries) {
-            val it: Iterator<ISynset> = dict.getSynsetIterator(pos)
+            val it: Iterator<Synset> = dict.getSynsetIterator(pos)
             while (it.hasNext()) {
                 val synset = it.next()
                 val relatedIds: List<ISynsetID> = synset.allRelated
@@ -165,9 +165,9 @@ class JWI
         }
     }
 
-    fun tryForAllSynsetRelations(f: Consumer<ISynset>?) {
+    fun tryForAllSynsetRelations(f: Consumer<Synset>?) {
         for (pos in POS.entries) {
-            val it: Iterator<ISynset> = dict.getSynsetIterator(pos)
+            val it: Iterator<Synset> = dict.getSynsetIterator(pos)
             while (it.hasNext()) {
                 try {
                     val synset = it.next()
@@ -411,7 +411,7 @@ class JWI
         }
     }
 
-    fun walk(synset: ISynset, level: Int, ps: PrintStream) {
+    fun walk(synset: Synset, level: Int, ps: PrintStream) {
         val indentSpace = String(CharArray(level)).replace('\u0000', '\t')
         val links: Map<Pointer, List<ISynsetID>> = synset.related
         for (p in links.keys) {
@@ -431,7 +431,7 @@ class JWI
         }
     }
 
-    fun walk(synset: ISynset, p: Pointer, level: Int, ps: PrintStream) {
+    fun walk(synset: Synset, p: Pointer, level: Int, ps: PrintStream) {
         val indentSpace = String(CharArray(level)).replace('\u0000', '\t')
         val relations2: List<ISynsetID> = synset.getRelatedFor(p)
         for (synsetid2 in relations2) {
@@ -446,11 +446,12 @@ class JWI
     companion object {
 
         // H E L P E R S
-        fun toString(synset: ISynset): String {
+
+        fun toString(synset: Synset): String {
             return getMembers(synset) + synset.gloss
         }
 
-        fun getMembers(synset: ISynset): String {
+        fun getMembers(synset: Synset): String {
             val sb = StringBuilder()
             sb.append('{')
             var first = true

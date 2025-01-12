@@ -2,7 +2,7 @@ package org.jwi.use
 
 import edu.mit.jwi.item.ISenseEntry
 import edu.mit.jwi.item.ISenseKey
-import edu.mit.jwi.item.ISynset
+import edu.mit.jwi.item.Synset
 import edu.mit.jwi.item.IWord
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -25,7 +25,7 @@ class JWIIterateTests {
 
     @Test
     fun iterateSynsets() {
-        jwi!!.forAllSynsets(Consumer { s: ISynset? -> })
+        jwi!!.forAllSynsets(Consumer { s: Synset? -> })
     }
 
     @Test
@@ -40,7 +40,7 @@ class JWIIterateTests {
 
     @Test
     fun iterateSynsetRelations() {
-        jwi!!.forAllSynsetRelations(Consumer { r: ISynset? -> })
+        jwi!!.forAllSynsetRelations(Consumer { r: Synset? -> })
     }
 
     @Test
