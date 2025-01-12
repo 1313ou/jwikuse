@@ -1,7 +1,7 @@
 package org.jwi.use
 
 import edu.mit.jwi.item.ISenseEntry
-import edu.mit.jwi.item.ISenseKey
+import edu.mit.jwi.item.SenseKey
 import edu.mit.jwi.item.Synset
 import edu.mit.jwi.item.Word
 import org.junit.jupiter.api.BeforeAll
@@ -15,37 +15,37 @@ class JWIIterateTests {
 
     @Test
     fun iterateLemmas() {
-        jwi!!.forAllLemmas(Consumer { l: String? -> })
+        jwi!!.forAllLemmas(Consumer { l: String -> })
     }
 
     @Test
     fun iterateSenses() {
-        jwi!!.forAllSenses(Consumer { s: Word? -> })
+        jwi!!.forAllSenses(Consumer { s: Word -> })
     }
 
     @Test
     fun iterateSynsets() {
-        jwi!!.forAllSynsets(Consumer { s: Synset? -> })
+        jwi!!.forAllSynsets(Consumer { s: Synset -> })
     }
 
     @Test
     fun iterateSenseEntries() {
-        jwi!!.forAllSenseEntries(Consumer { se: ISenseEntry? -> })
+        jwi!!.forAllSenseEntries(Consumer { se: ISenseEntry -> })
     }
 
     @Test
     fun iterateSenseRelations() {
-        jwi!!.forAllSenseRelations(Consumer { r: Word? -> })
+        jwi!!.forAllSenseRelations(Consumer { r: Word -> })
     }
 
     @Test
     fun iterateSynsetRelations() {
-        jwi!!.forAllSynsetRelations(Consumer { r: Synset? -> })
+        jwi!!.forAllSynsetRelations(Consumer { r: Synset -> })
     }
 
     @Test
     fun iterateSenseKeys() {
-        jwi!!.forAllSensekeys(Consumer { sk: ISenseKey? -> })
+        jwi!!.forAllSensekeys(Consumer { sk: SenseKey -> })
     }
 
     companion object {
