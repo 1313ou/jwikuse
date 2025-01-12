@@ -8,6 +8,7 @@ import java.io.File
 import java.io.IOException
 import java.io.PrintStream
 import java.util.function.Consumer
+import kotlin.Throws
 
 /**
  * JWI
@@ -334,7 +335,7 @@ class JWI
     }
 
     fun walk(idx: IIndexWord, ps: PrintStream) {
-        val pointers: Set<IPointer> = idx.pointers
+        val pointers: Set<Pointer> = idx.pointers
         for (ptr in pointers) {
             ps.println("has relation = $ptr")
         }
@@ -382,7 +383,7 @@ class JWI
         }
 
         // lexical relations
-        val relatedMap: Map<IPointer, List<IWordID>> = sense.related
+        val relatedMap: Map<Pointer, List<IWordID>> = sense.related
         walk(relatedMap, ps)
 
         // verb frames
@@ -392,7 +393,7 @@ class JWI
         ps.printf("  sensenum: %s tag cnt:%s%n", senseEntry?.senseNumber ?: "<missing>", senseEntry?.tagCount ?: "<missing>")
     }
 
-    fun walk(relatedMap: Map<IPointer, List<IWordID>>, ps: PrintStream) {
+    fun walk(relatedMap: Map<Pointer, List<IWordID>>, ps: PrintStream) {
         for (entry in relatedMap.entries) {
             val pointer = entry.key
             for (relatedId in entry.value) {
@@ -412,7 +413,7 @@ class JWI
 
     fun walk(synset: ISynset, level: Int, ps: PrintStream) {
         val indentSpace = String(CharArray(level)).replace('\u0000', '\t')
-        val links: Map<IPointer, List<ISynsetID>> = synset.related
+        val links: Map<Pointer, List<ISynsetID>> = synset.related
         for (p in links.keys) {
             ps.printf("%s🡆 %s%n", indentSpace, p.name)
             val relations2: List<ISynsetID> = links[p]!!
@@ -420,7 +421,7 @@ class JWI
         }
     }
 
-    fun walk(relations2: List<ISynsetID>, p: IPointer, level: Int, ps: PrintStream) {
+    fun walk(relations2: List<ISynsetID>, p: Pointer, level: Int, ps: PrintStream) {
         val indentSpace = String(CharArray(level)).replace('\u0000', '\t')
         for (synsetid2 in relations2) {
             val synset2 = dict.getSynset(synsetid2)
@@ -430,7 +431,7 @@ class JWI
         }
     }
 
-    fun walk(synset: ISynset, p: IPointer, level: Int, ps: PrintStream) {
+    fun walk(synset: ISynset, p: Pointer, level: Int, ps: PrintStream) {
         val indentSpace = String(CharArray(level)).replace('\u0000', '\t')
         val relations2: List<ISynsetID> = synset.getRelatedFor(p)
         for (synsetid2 in relations2) {
@@ -466,7 +467,7 @@ class JWI
             return sb.toString()
         }
 
-        private fun canRecurse(p: IPointer): Boolean {
+        private fun canRecurse(p: Pointer): Boolean {
             val symbol = p.symbol
             when (symbol) {
                 "@", "~", "%p", "#p", "%m", "#m", "%s", "#s", "*", ">" -> return true
