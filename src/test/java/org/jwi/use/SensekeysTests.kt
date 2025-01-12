@@ -1,6 +1,6 @@
 package org.jwi.use
 
-import edu.mit.jwi.item.IWord
+import edu.mit.jwi.item.Word
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.io.IOException
@@ -45,7 +45,7 @@ class SensekeysTests {
             val count = AtomicInteger(0)
             val errCount = AtomicInteger(0)
 
-            jwi.forAllSenses(Consumer forAllSenses@{ s: IWord ->
+            jwi.forAllSenses(Consumer forAllSenses@{ s: Word ->
                 val sk = s.senseKey
                 val se = jwi.dict.getSenseEntry(sk)
                 if (se == null) {
@@ -62,7 +62,7 @@ class SensekeysTests {
             val count = AtomicInteger(0)
             val errCount = AtomicInteger(0)
 
-            jwi.forAllSenses(Consumer forAllSenses@{ s: IWord? ->
+            jwi.forAllSenses(Consumer forAllSenses@{ s: Word? ->
                 val sk = s!!.senseKey
                 val se = jwi.dict.getSenseEntry(sk)
                 if (se == null) {

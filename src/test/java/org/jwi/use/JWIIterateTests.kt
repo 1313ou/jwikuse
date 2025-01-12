@@ -3,7 +3,7 @@ package org.jwi.use
 import edu.mit.jwi.item.ISenseEntry
 import edu.mit.jwi.item.ISenseKey
 import edu.mit.jwi.item.Synset
-import edu.mit.jwi.item.IWord
+import edu.mit.jwi.item.Word
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.io.IOException
@@ -20,7 +20,7 @@ class JWIIterateTests {
 
     @Test
     fun iterateSenses() {
-        jwi!!.forAllSenses(Consumer { s: IWord? -> })
+        jwi!!.forAllSenses(Consumer { s: Word? -> })
     }
 
     @Test
@@ -35,7 +35,7 @@ class JWIIterateTests {
 
     @Test
     fun iterateSenseRelations() {
-        jwi!!.forAllSenseRelations(Consumer { r: IWord? -> })
+        jwi!!.forAllSenseRelations(Consumer { r: Word? -> })
     }
 
     @Test
