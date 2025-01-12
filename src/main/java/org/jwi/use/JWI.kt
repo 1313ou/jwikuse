@@ -156,7 +156,7 @@ class JWI
             val it: Iterator<Synset> = dict.getSynsetIterator(pos)
             while (it.hasNext()) {
                 val synset = it.next()
-                val relatedIds: List<ISynsetID> = synset.allRelated
+                val relatedIds: List<SynsetID> = synset.allRelated
                 for (relatedId in relatedIds) {
                     val related = dict.getSynset(relatedId)!!
                     f?.accept(related)
@@ -171,7 +171,7 @@ class JWI
             while (it.hasNext()) {
                 try {
                     val synset = it.next()
-                    val relatedIds: List<ISynsetID> = synset.allRelated
+                    val relatedIds: List<SynsetID> = synset.allRelated
                     for (relatedId in relatedIds) {
                         try {
                             val related = dict.getSynset(relatedId)!!
@@ -413,15 +413,15 @@ class JWI
 
     fun walk(synset: Synset, level: Int, ps: PrintStream) {
         val indentSpace = String(CharArray(level)).replace('\u0000', '\t')
-        val links: Map<Pointer, List<ISynsetID>> = synset.related
+        val links: Map<Pointer, List<SynsetID>> = synset.related
         for (p in links.keys) {
             ps.printf("%s🡆 %s%n", indentSpace, p.name)
-            val relations2: List<ISynsetID> = links[p]!!
+            val relations2: List<SynsetID> = links[p]!!
             walk(relations2, p, level, ps)
         }
     }
 
-    fun walk(relations2: List<ISynsetID>, p: Pointer, level: Int, ps: PrintStream) {
+    fun walk(relations2: List<SynsetID>, p: Pointer, level: Int, ps: PrintStream) {
         val indentSpace = String(CharArray(level)).replace('\u0000', '\t')
         for (synsetid2 in relations2) {
             val synset2 = dict.getSynset(synsetid2)
@@ -433,7 +433,7 @@ class JWI
 
     fun walk(synset: Synset, p: Pointer, level: Int, ps: PrintStream) {
         val indentSpace = String(CharArray(level)).replace('\u0000', '\t')
-        val relations2: List<ISynsetID> = synset.getRelatedFor(p)
+        val relations2: List<SynsetID> = synset.getRelatedFor(p)
         for (synsetid2 in relations2) {
             val synset2 = dict.getSynset(synsetid2)
             ps.printf("%s%s%n", indentSpace, toString(synset2!!))
