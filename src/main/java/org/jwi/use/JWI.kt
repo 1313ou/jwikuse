@@ -498,7 +498,7 @@ class JWI
             val wnHome = args[0]
             val lemma = args[1]
             JWI(wnHome, null, ramFactory)
-                //.walk(lemma, System.out)
+                .walk(lemma, System.out)
         }
     }
 }
