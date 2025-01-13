@@ -2,6 +2,7 @@ package org.jwi.use
 
 import edu.mit.jwi.*
 import edu.mit.jwi.data.FileProvider
+import edu.mit.jwi.data.ILoadPolicy.Companion.IMMEDIATE_LOAD
 import edu.mit.jwi.item.*
 import java.io.File
 import java.io.IOException
@@ -12,7 +13,7 @@ import kotlin.Throws
 
 val cachingFactory: (url: URL, config: Config?) -> IDictionary = { url: URL, config: Config? -> Dictionary(url, config) }
 val nonCachingFactory: (url: URL, config: Config?) -> IDictionary = { url: URL, config: Config? -> DataSourceDictionary(FileProvider(url), config) }
-val ramFactory: (url: URL, config: Config?) -> IDictionary = { url: URL, config: Config? -> RAMDictionary(url) }
+val ramFactory: (url: URL, config: Config?) -> IDictionary = { url: URL, config: Config? -> RAMDictionary(url, IMMEDIATE_LOAD, config) }
 
 /**
  * JWI
@@ -407,7 +408,7 @@ class JWI
             val pointer = entry.key
             for (relatedId in entry.value) {
                 val related = dict.getWord(relatedId)
-                ps.printf("  related %s lemma:%s synset:%s%n", pointer, related!!.lemma, related.synset.toString())
+                ps.printf("  %s lemma:%s synset:%s%n", pointer, related!!.lemma, related.synset.toString())
             }
         }
     }
@@ -496,7 +497,8 @@ class JWI
         fun main(args: Array<String>) {
             val wnHome = args[0]
             val lemma = args[1]
-            JWI(wnHome, null).walk(lemma, System.out)
+            JWI(wnHome, null, ramFactory)
+                //.walk(lemma, System.out)
         }
     }
 }
