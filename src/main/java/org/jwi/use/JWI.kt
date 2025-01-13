@@ -10,8 +10,9 @@ import java.io.PrintStream
 import java.net.URL
 import java.util.function.Consumer
 import kotlin.Throws
+import kotlin.system.measureTimeMillis
 
-val cachingFactory: (url: URL, config: Config?) -> IDictionary = { url: URL, config: Config? -> Dictionary(url, config) }
+val defaultFactory: (url: URL, config: Config?) -> IDictionary = { url: URL, config: Config? -> Dictionary(url, config) }
 val nonCachingFactory: (url: URL, config: Config?) -> IDictionary = { url: URL, config: Config? -> DataSourceDictionary(FileProvider(url), config) }
 val ramFactory: (url: URL, config: Config?) -> IDictionary = { url: URL, config: Config? -> RAMDictionary(url, IMMEDIATE_LOAD, config) }
 
@@ -24,7 +25,7 @@ class JWI
 @JvmOverloads constructor(
     val wnHome: String,
     config: Config? = null,
-    factory: (url: URL, config: Config?) -> IDictionary = cachingFactory,
+    factory: (url: URL, config: Config?) -> IDictionary = defaultFactory,
 ) {
 
     val dict: IDictionary
@@ -497,8 +498,19 @@ class JWI
         fun main(args: Array<String>) {
             val wnHome = args[0]
             val lemma = args[1]
-            JWI(wnHome, null, ramFactory)
-                .walk(lemma, System.out)
+            val factoryHint = if (args.size > 2) args[2] else null
+            val factory = when (factoryHint) {
+                "--ram"      -> ramFactory
+                "--no-cache" -> nonCachingFactory
+                else         -> defaultFactory
+            }
+
+            lateinit var jwi: JWI
+            val timeTaken = measureTimeMillis { jwi = JWI(wnHome, null, factory) }
+            val timeTaken2 = measureTimeMillis { jwi.walk(lemma, System.out) }
+
+            println("Time taken loading : $timeTaken ms")
+            println("Time taken browsing: $timeTaken2 ms")
         }
     }
 }
