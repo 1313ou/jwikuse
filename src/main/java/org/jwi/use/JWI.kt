@@ -2,14 +2,13 @@ package org.jwi.use
 
 import edu.mit.jwi.*
 import edu.mit.jwi.data.FileProvider
-import edu.mit.jwi.data.ILoadPolicy.Companion.IMMEDIATE_LOAD
+import edu.mit.jwi.data.LoadPolicy.IMMEDIATE_LOAD
 import edu.mit.jwi.item.*
 import java.io.File
 import java.io.IOException
 import java.io.PrintStream
 import java.net.URL
 import java.util.function.Consumer
-import kotlin.Throws
 import kotlin.system.measureTimeMillis
 
 val defaultFactory: (url: URL, config: Config?) -> IDictionary = { url: URL, config: Config? -> Dictionary(url, config) }
