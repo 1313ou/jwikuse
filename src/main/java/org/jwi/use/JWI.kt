@@ -1,14 +1,18 @@
 package org.jwi.use
 
-import edu.mit.jwi.Config
-import edu.mit.jwi.Dictionary
-import edu.mit.jwi.IDictionary
+import edu.mit.jwi.*
+import edu.mit.jwi.data.FileProvider
 import edu.mit.jwi.item.*
 import java.io.File
 import java.io.IOException
 import java.io.PrintStream
+import java.net.URL
 import java.util.function.Consumer
 import kotlin.Throws
+
+val cachingFactory: (url: URL, config: Config?) -> IDictionary = { url: URL, config: Config? -> Dictionary(url, config) }
+val nonCachingFactory: (url: URL, config: Config?) -> IDictionary = { url: URL, config: Config? -> DataSourceDictionary(FileProvider(url), config) }
+val ramFactory: (url: URL, config: Config?) -> IDictionary = { url: URL, config: Config? -> RAMDictionary(url) }
 
 /**
  * JWI
@@ -16,26 +20,30 @@ import kotlin.Throws
  * @author Bernard Bou
  */
 class JWI
-@JvmOverloads constructor(@JvmField val wnHome: String, config: Config? = null) {
+@JvmOverloads constructor(
+    val wnHome: String,
+    config: Config? = null,
+    factory: (url: URL, config: Config?) -> IDictionary = cachingFactory,
+) {
 
-    @JvmField
     val dict: IDictionary
 
     init {
         System.out.printf("FROM %s%n", wnHome)
 
         // construct the URL to the WordNet dictionary directory
-        val url = File(wnHome).toURI().toURL()
+        val home = File(wnHome).toURI().toURL()
 
         // construct the dictionary object and open it
-        dict = Dictionary(url, config)
+        dict = factory.invoke(home, config)
 
         // open it
         dict.open()
     }
 
     // M A I N   I T E R A T I O N S
-    fun forAllLemmas(f: Consumer<String?>?) {
+
+    fun forAllLemmas(f: Consumer<String>?) {
         for (pos in POS.entries) {
             val it: Iterator<IndexWord> = dict.getIndexWordIterator(pos)
             while (it.hasNext()) {
@@ -315,6 +323,7 @@ class JWI
     }
 
     // T R E E   E X P L O R A T I O N S
+
     fun walk(lemma: String, ps: PrintStream) {
         for (pos in POS.entries) {
             walk(lemma, pos, ps)
