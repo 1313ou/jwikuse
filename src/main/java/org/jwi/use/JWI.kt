@@ -9,6 +9,7 @@ import java.io.IOException
 import java.io.PrintStream
 import java.net.URL
 import java.util.function.Consumer
+import kotlin.Throws
 import kotlin.system.measureTimeMillis
 
 val defaultFactory: (url: URL, config: Config?) -> IDictionary = { url: URL, config: Config? -> Dictionary(url, config) }
@@ -456,6 +457,26 @@ class JWI
     companion object {
 
         // H E L P E R S
+
+        @JvmStatic
+        fun makeFileFactory(tag: String?): (file: File, config: Config?) -> IDictionary {
+            println("File dictionary factory: $tag")
+            return when (tag) {
+                "SOURCE" -> { file: File, config: Config? -> DataSourceDictionary(file, config) }
+                "RAM"    -> { file: File, config: Config? -> Dictionary(file, config) }
+                else     -> { file: File, config: Config? -> RAMDictionary(file, IMMEDIATE_LOAD, config) }
+            }
+        }
+
+        @JvmStatic
+        fun makeURLFactory(tag: String?): (url: URL, config: Config?) -> IDictionary {
+            println("URL dictionary factory: $tag")
+            return when (tag) {
+                "SOURCE" -> { url: URL, config: Config? -> DataSourceDictionary(url, config) }
+                "RAM"    -> { url: URL, config: Config? -> Dictionary(url, config) }
+                else     -> { url: URL, config: Config? -> RAMDictionary(url, IMMEDIATE_LOAD, config) }
+            }
+        }
 
         fun toString(synset: Synset): String {
             return getMembers(synset) + synset.gloss

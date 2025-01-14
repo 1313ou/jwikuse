@@ -7,7 +7,6 @@ import edu.mit.jwi.item.Word
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.io.IOException
-import java.io.OutputStream
 import java.io.PrintStream
 import java.util.function.Consumer
 
@@ -15,57 +14,51 @@ class JWIIterateTests {
 
     @Test
     fun iterateLemmas() {
-        jwi!!.forAllLemmas(Consumer { l: String -> })
+        jwi.forAllLemmas(Consumer { l: String -> })
     }
 
     @Test
     fun iterateSenses() {
-        jwi!!.forAllSenses(Consumer { s: Word -> })
+        jwi.forAllSenses(Consumer { s: Word -> })
     }
 
     @Test
     fun iterateSynsets() {
-        jwi!!.forAllSynsets(Consumer { s: Synset -> })
+        jwi.forAllSynsets(Consumer { s: Synset -> })
     }
 
     @Test
     fun iterateSenseEntries() {
-        jwi!!.forAllSenseEntries(Consumer { se: SenseEntry -> })
+        jwi.forAllSenseEntries(Consumer { se: SenseEntry -> })
     }
 
     @Test
     fun iterateSenseRelations() {
-        jwi!!.forAllSenseRelations(Consumer { r: Word -> })
+        jwi.forAllSenseRelations(Consumer { r: Word -> })
     }
 
     @Test
     fun iterateSynsetRelations() {
-        jwi!!.forAllSynsetRelations(Consumer { r: Synset -> })
+        jwi.forAllSynsetRelations(Consumer { r: Synset -> })
     }
 
     @Test
     fun iterateSenseKeys() {
-        jwi!!.forAllSensekeys(Consumer { sk: SenseKey -> })
+        jwi.forAllSensekeys(Consumer { sk: SenseKey -> })
     }
 
     companion object {
 
-        private val VERBOSE = !System.getProperties().containsKey("SILENT")
+        private lateinit var PS: PrintStream
 
-        private val PS: PrintStream = if (VERBOSE) System.out else PrintStream(object : OutputStream() {
-            override fun write(b: Int) {
-                //DO NOTHING
-            }
-        })
-
-        private var jwi: JWI? = null
+        private lateinit var jwi: JWI
 
         @JvmStatic
         @BeforeAll
         @Throws(IOException::class)
         fun init() {
-            val wnHome = System.getProperty("SOURCE")
-            jwi = JWI(wnHome)
+            jwi = makeJWI()
+            PS = makePS()
         }
     }
 }
