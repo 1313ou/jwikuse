@@ -9,7 +9,6 @@ import java.io.IOException
 import java.io.PrintStream
 import java.net.URL
 import java.util.function.Consumer
-import kotlin.Throws
 import kotlin.system.measureTimeMillis
 
 val defaultFactory: (url: URL, config: Config?) -> IDictionary = { url: URL, config: Config? -> Dictionary(url, config) }
@@ -24,6 +23,7 @@ val ramFactory: (url: URL, config: Config?) -> IDictionary = { url: URL, config:
 class JWI(
     val dict: IDictionary,
 ) {
+
     @JvmOverloads
     constructor(
         wnHome: String,
@@ -153,7 +153,22 @@ class JWI(
 
     // S P E C I F I C   I T E R A T I O N S
 
-    fun forAllSynsetRelations(f: Consumer<Synset>?) {
+    fun forAllSynsetRelations(f: Consumer<Relation<Synset>>?) {
+        for (pos in POS.entries) {
+            val it: Iterator<Synset> = dict.getSynsetIterator(pos)
+            while (it.hasNext()) {
+                val synset = it.next()
+                val related: Map<Pointer, List<SynsetID>> = synset.related
+                for (ptr in related.keys)
+                    for (relatedId in related[ptr]!!) {
+                        val related = dict.getSynset(relatedId)!!
+                        f?.accept(Relation(ptr.toString(), synset to related))
+                    }
+            }
+        }
+    }
+
+    fun forAllFlatSynsetRelations(f: Consumer<Pair<Synset, Synset>>?) {
         for (pos in POS.entries) {
             val it: Iterator<Synset> = dict.getSynsetIterator(pos)
             while (it.hasNext()) {
@@ -161,13 +176,36 @@ class JWI(
                 val relatedIds: List<SynsetID> = synset.allRelated
                 for (relatedId in relatedIds) {
                     val related = dict.getSynset(relatedId)!!
-                    f?.accept(related)
+                    f?.accept(synset to related)
                 }
             }
         }
     }
 
-    fun tryForAllSynsetRelations(f: Consumer<Synset>?) {
+    fun tryForAllSynsetRelations(f: Consumer<Relation<Synset>>?) {
+        for (pos in POS.entries) {
+            val it: Iterator<Synset> = dict.getSynsetIterator(pos)
+            while (it.hasNext()) {
+                try {
+                    val synset = it.next()
+                    val related: Map<Pointer, List<SynsetID>> = synset.related
+                    for (ptr in related.keys)
+                        for (relatedId in related[ptr]!!) {
+                            try {
+                                val related = dict.getSynset(relatedId)!!
+                                f?.accept(Relation(ptr.toString(), synset to related))
+                            } catch (e: Exception) {
+                                System.err.println(relatedId.toString() + " " + e.message)
+                            }
+                        }
+                } catch (e: Exception) {
+                    System.err.println(it.toString() + " " + e.message)
+                }
+            }
+        }
+    }
+
+    fun tryForAllFlatSynsetRelations(f: Consumer<Pair<Synset, Synset>>?) {
         for (pos in POS.entries) {
             val it: Iterator<Synset> = dict.getSynsetIterator(pos)
             while (it.hasNext()) {
@@ -177,7 +215,7 @@ class JWI(
                     for (relatedId in relatedIds) {
                         try {
                             val related = dict.getSynset(relatedId)!!
-                            f?.accept(related)
+                            f?.accept(synset to related)
                         } catch (e: Exception) {
                             System.err.println(relatedId.toString() + " " + e.message)
                         }
@@ -189,7 +227,7 @@ class JWI(
         }
     }
 
-    fun forAllSenseRelations(f: Consumer<Word>?) {
+    fun forAllSenseRelations(f: Consumer<Relation<Word>>?) {
         for (pos in POS.entries) {
             val it: Iterator<IndexWord> = dict.getIndexWordIterator(pos)
             while (it.hasNext()) {
@@ -197,23 +235,48 @@ class JWI(
                 val senseids: List<IWordID> = idx.wordIDs
                 for (senseid in senseids)  // synset id, sense number, and lemma
                 {
-                    val sense = dict.getWord(senseid)
-                    if (sense == null) {
-                        System.err.printf("⚠ senseid: %s ➜ null sense", senseid.toString())
-                        //val sense2: Word = dict.getWord(senseid)
-                        continue
-                    }
-                    val relatedIds: List<IWordID>? = sense.relatedWords
+                    val sense = dict.getWord(senseid)!!
+                    //if (sense == null) {
+                    //    System.err.printf("⚠ senseid: %s ➜ null sense", senseid.toString())
+                    //    //val sense2: Word = dict.getWord(senseid)
+                    //    continue
+                    //}
+                    val related: Map<Pointer, List<IWordID>> = sense.related
+                    for (ptr in related.keys)
+                        for (relatedId in related[ptr]!!) {
+                            val related = dict.getWord(relatedId)!!
+                            f?.accept(Relation(ptr.toString(), sense to related))
+                        }
+                }
+            }
+        }
+    }
+
+    fun forAllFlatSenseRelations(f: Consumer<Pair<Word, Word>>?) {
+        for (pos in POS.entries) {
+            val it: Iterator<IndexWord> = dict.getIndexWordIterator(pos)
+            while (it.hasNext()) {
+                val idx = it.next()
+                val senseids: List<IWordID> = idx.wordIDs
+                for (senseid in senseids)  // synset id, sense number, and lemma
+                {
+                    val sense = dict.getWord(senseid)!!
+                    // if (sense == null) {
+                    //     System.err.printf("⚠ senseid: %s ➜ null sense", senseid.toString())
+                    //     //val sense2: Word = dict.getWord(senseid)
+                    //     continue
+                    // }
+                    val relatedIds: List<IWordID>? = sense.allRelated
                     for (relatedId in relatedIds!!) {
                         val related = dict.getWord(relatedId)!!
-                        f?.accept(related)
+                        f?.accept(sense to related)
                     }
                 }
             }
         }
     }
 
-    fun tryForAllSenseRelations(f: Consumer<Word>?) {
+    fun tryForAllSenseRelations(f: Consumer<Relation<Word>>?) {
         for (pos in POS.entries) {
             val it: Iterator<IndexWord> = dict.getIndexWordIterator(pos)
             while (it.hasNext()) {
@@ -222,16 +285,45 @@ class JWI(
                 for (senseid in senseids)  // synset id, sense number, and lemma
                 {
                     try {
-                        val sense = dict.getWord(senseid)
-                        if (sense == null) {
-                            System.err.printf("⚠ senseid: %s ➜ null sense", senseid.toString())
-                            //val sense2: Word = dict.getWord(senseid)
-                            continue
-                        }
-                        val relatedIds: List<IWordID>? = sense.relatedWords
+                        val sense = dict.getWord(senseid)!!
+                        // if (sense == null) {
+                        //     System.err.printf("⚠ senseid: %s ➜ null sense", senseid.toString())
+                        //     //val sense2: Word = dict.getWord(senseid)
+                        //     continue
+                        // }
+                        val related: Map<Pointer, List<IWordID>> = sense.related
+                        for (ptr in related.keys)
+                            for (relatedId in related[ptr]!!) {
+                                val related = dict.getWord(relatedId)!!
+                                f?.accept(Relation(ptr.toString(), sense to related))
+                            }
+                    } catch (e: Exception) {
+                        System.err.println(senseid.toString() + " " + e.message)
+                    }
+                }
+            }
+        }
+    }
+
+    fun tryForAllFlatSenseRelations(f: Consumer<Pair<Word, Word>>?) {
+        for (pos in POS.entries) {
+            val it: Iterator<IndexWord> = dict.getIndexWordIterator(pos)
+            while (it.hasNext()) {
+                val idx = it.next()
+                val senseids: List<IWordID> = idx.wordIDs
+                for (senseid in senseids)  // synset id, sense number, and lemma
+                {
+                    try {
+                        val sense = dict.getWord(senseid)!!
+                        // if (sense == null) {
+                        //     System.err.printf("⚠ senseid: %s ➜ null sense", senseid.toString())
+                        //     //val sense2: Word = dict.getWord(senseid)
+                        //     continue
+                        // }
+                        val relatedIds: List<IWordID>? = sense.allRelated
                         for (relatedId in relatedIds!!) {
                             val related = dict.getWord(relatedId)!!
-                            f?.accept(related)
+                            f?.accept(sense to related)
                         }
                     } catch (e: Exception) {
                         System.err.println(senseid.toString() + " " + e.message)

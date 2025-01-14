@@ -38,6 +38,16 @@ class JWIIterateTests {
     }
 
     @Test
+    fun iterateFlatSenseRelations() {
+        jwi.forAllFlatSenseRelations { PS.println(it) }
+    }
+
+    @Test
+    fun iterateFlatSynsetRelations() {
+        jwi.forAllFlatSynsetRelations { PS.println(it) }
+    }
+
+    @Test
     fun iterateSenseKeys() {
         jwi.forAllSensekeys { PS.println(it) }
     }
@@ -55,7 +65,9 @@ class JWIIterateTests {
             jwi.forAllSynsets { ps.println(it) }
             jwi.forAllSenseEntries { ps.println(it) }
             jwi.forAllSenseRelations { ps.println(it) }
+            jwi.forAllFlatSenseRelations { ps.println(it) }
             jwi.forAllSynsetRelations { ps.println(it) }
+            jwi.forAllFlatSynsetRelations { ps.println(it) }
             jwi.forAllSensekeys { ps.println(it) }
         }
 
