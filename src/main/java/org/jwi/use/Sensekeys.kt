@@ -1,6 +1,6 @@
 package org.jwi.use
 
-import edu.mit.jwi.data.parse.SenseKeyParser.Companion.instance
+import edu.mit.jwi.data.parse.SenseKeyParser
 import edu.mit.jwi.item.SenseEntry
 import edu.mit.jwi.item.IWordID
 import java.util.function.Consumer
@@ -22,7 +22,7 @@ object Sensekeys {
 
     @JvmStatic
     fun lookupSensekey(jwi: JWI, skStr: String): SenseEntry? {
-        val parsedSk = instance!!.parseLine(skStr)
+        val parsedSk = SenseKeyParser.parseLine(skStr)
         assert(skStr == parsedSk.toString())
         // lookup
         return jwi.dict.getSenseEntry(parsedSk)
