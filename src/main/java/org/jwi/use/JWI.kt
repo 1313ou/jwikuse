@@ -21,25 +21,17 @@ val ramFactory: (url: URL, config: Config?) -> IDictionary = { url: URL, config:
  *
  * @author Bernard Bou
  */
-class JWI
-@JvmOverloads constructor(
-    val wnHome: String,
-    config: Config? = null,
-    factory: (url: URL, config: Config?) -> IDictionary = defaultFactory,
+class JWI(
+    val dict: IDictionary,
 ) {
-
-    val dict: IDictionary
+    @JvmOverloads
+    constructor(
+        wnHome: String,
+        config: Config? = null,
+        factory: (url: URL, config: Config?) -> IDictionary = defaultFactory,
+    ) : this(makeDict(wnHome, config, factory))
 
     init {
-        System.out.printf("FROM %s%n", wnHome)
-
-        // construct the URL to the WordNet dictionary directory
-        val home = File(wnHome).toURI().toURL()
-
-        // construct the dictionary object and open it
-        dict = factory.invoke(home, config)
-
-        // open it
         dict.open()
     }
 
@@ -457,6 +449,25 @@ class JWI
     companion object {
 
         // H E L P E R S
+
+        @JvmStatic
+        fun makeDict(
+            wnHome: String,
+            config: Config? = null,
+            factory: (url: URL, config: Config?) -> IDictionary,
+        ): IDictionary {
+            System.out.printf("FROM %s%n", wnHome)
+
+            // construct the URL to the WordNet dictionary directory
+            val home = File(wnHome).toURI().toURL()
+
+            // construct the dictionary object and open it
+            val dict = factory.invoke(home, config)
+
+            // open it
+            dict.open()
+            return dict
+        }
 
         @JvmStatic
         fun makeFileFactory(tag: String?): (file: File, config: Config?) -> IDictionary {

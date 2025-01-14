@@ -1,50 +1,45 @@
 package org.jwi.use
 
-import edu.mit.jwi.item.SenseEntry
-import edu.mit.jwi.item.SenseKey
-import edu.mit.jwi.item.Synset
-import edu.mit.jwi.item.Word
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.io.IOException
 import java.io.PrintStream
-import java.util.function.Consumer
 
 class JWIIterateTests {
 
     @Test
     fun iterateLemmas() {
-        jwi.forAllLemmas(Consumer { l: String -> })
+        jwi.forAllLemmas { PS.println(it) }
     }
 
     @Test
     fun iterateSenses() {
-        jwi.forAllSenses(Consumer { s: Word -> })
+        jwi.forAllSenses { PS.println(it) }
     }
 
     @Test
     fun iterateSynsets() {
-        jwi.forAllSynsets(Consumer { s: Synset -> })
+        jwi.forAllSynsets { PS.println(it) }
     }
 
     @Test
     fun iterateSenseEntries() {
-        jwi.forAllSenseEntries(Consumer { se: SenseEntry -> })
+        jwi.forAllSenseEntries { PS.println(it) }
     }
 
     @Test
     fun iterateSenseRelations() {
-        jwi.forAllSenseRelations(Consumer { r: Word -> })
+        jwi.forAllSenseRelations { PS.println(it) }
     }
 
     @Test
     fun iterateSynsetRelations() {
-        jwi.forAllSynsetRelations(Consumer { r: Synset -> })
+        jwi.forAllSynsetRelations { PS.println(it) }
     }
 
     @Test
     fun iterateSenseKeys() {
-        jwi.forAllSensekeys(Consumer { sk: SenseKey -> })
+        jwi.forAllSensekeys { PS.println(it) }
     }
 
     companion object {
@@ -52,6 +47,17 @@ class JWIIterateTests {
         private lateinit var PS: PrintStream
 
         private lateinit var jwi: JWI
+
+        @JvmStatic
+        fun iterateAll(jwi: JWI, ps: PrintStream) {
+            jwi.forAllLemmas { ps.println(it) }
+            jwi.forAllSenses { ps.println(it) }
+            jwi.forAllSynsets { ps.println(it) }
+            jwi.forAllSenseEntries { ps.println(it) }
+            jwi.forAllSenseRelations { ps.println(it) }
+            jwi.forAllSynsetRelations { ps.println(it) }
+            jwi.forAllSensekeys { ps.println(it) }
+        }
 
         @JvmStatic
         @BeforeAll

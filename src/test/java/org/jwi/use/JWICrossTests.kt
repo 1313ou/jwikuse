@@ -3,7 +3,6 @@ package org.jwi.use
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.io.IOException
-import java.io.OutputStream
 import java.io.PrintStream
 
 class JWICrossTests {
@@ -15,34 +14,32 @@ class JWICrossTests {
 
     @Test
     fun walkWord1() {
-        PS.println(jwi1!!.wnHome)
+        PS.println(wnHome1)
         jwi1!!.walk(word!!, PS)
     }
 
     @Test
     fun walkWord2() {
-        PS.println(jwi2!!.wnHome)
+        PS.println(wnHome2)
         jwi2!!.walk(word!!, PS)
     }
 
     private fun walk2(lemma: String) {
-        PS.println(jwi1!!.wnHome)
+        PS.println(wnHome1)
         jwi1!!.walk(lemma, PS)
-        PS.println(jwi2!!.wnHome)
+        PS.println(wnHome2)
         jwi2!!.walk(lemma, PS)
     }
 
     companion object {
 
-        private val VERBOSE = !System.getProperties().containsKey("SILENT")
-
-        private val PS: PrintStream = if (VERBOSE) System.out else PrintStream(object : OutputStream() {
-            override fun write(b: Int) {
-                //DO NOTHING
-            }
-        })
+        private val PS: PrintStream = makePS()
 
         private var word: String? = null
+
+        var wnHome1: String? = null
+
+        var wnHome2: String? = null
 
         private var jwi1: JWI? = null
 
@@ -53,10 +50,10 @@ class JWICrossTests {
         @Throws(IOException::class)
         fun init() {
             word = System.getProperty("WORD")
-            val wnHome1 = System.getProperty("SOURCE")
-            val wnHome2 = System.getProperty("SOURCE2")
-            jwi1 = JWI(wnHome1)
-            jwi2 = JWI(wnHome2)
+            wnHome1 = System.getProperty("SOURCE")
+            wnHome2 = System.getProperty("SOURCE2")
+            jwi1 = JWI(wnHome1!!)
+            jwi2 = JWI(wnHome2!!)
         }
     }
 }

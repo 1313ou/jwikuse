@@ -21,6 +21,11 @@ class JWIWalkTests {
         private lateinit var jwi: JWI
 
         @JvmStatic
+        fun walk(jwi: JWI, word: String, ps: PrintStream) {
+            jwi.walk(word, ps)
+        }
+
+        @JvmStatic
         @BeforeAll
         @Throws(IOException::class)
         fun init() {

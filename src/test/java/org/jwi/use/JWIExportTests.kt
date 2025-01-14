@@ -1,8 +1,11 @@
 package org.jwi.use
 
+import edu.mit.jwi.DeserializedRAMDictionary
 import edu.mit.jwi.RAMDictionary
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.jwi.use.JWIIterateTests.Companion.iterateAll
+import org.jwi.use.JWIWalkTests.Companion.walk
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -12,11 +15,12 @@ class JWIExportTests {
 
     @Test
     fun export() {
-
         val d = jwi.dict as RAMDictionary
         d.export(FileOutputStream(f))
-        // var d = DeserializedRAMDictionary(f)
-
+        val d2 = DeserializedRAMDictionary(f)
+        val jwi2 = JWI(d2)
+        iterateAll(jwi2, System.out)
+        walk(jwi2, "love", System.out)
     }
 
     companion object {
