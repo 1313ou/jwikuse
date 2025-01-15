@@ -97,7 +97,7 @@ class ComparatorsTests {
         }
 
         fun generate(cmp: Comparator<String?>?, vararg items: String?): SortedSet<String?> {
-            //PS.printf("\tin\t%s%n", Arrays.toString(items));
+            //PS.printf("\tin\t%s%n", Arrays.toString(items))
             val set: SortedSet<String?> = TreeSet<String?>(cmp)
             set.addAll(listOf<String?>(*items))
             set.addAll(listOf<String?>(*items)) // again

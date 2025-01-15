@@ -228,7 +228,7 @@ class JWI(
             ps.println()
             ps.println("================================================================================")
             ps.println("■ pos = " + pos.name)
-            // ps.println("lemma = " + idx.getLemma());
+            // ps.println("lemma = " + idx.getLemma())
             walk(idx, ps)
         }
     }
@@ -250,7 +250,7 @@ class JWI(
     fun walk(senseid: IWordID, ps: PrintStream) {
         ps.println("--------------------------------------------------------------------------------")
 
-        //ps.println("senseid = " + senseid.toString());
+        //ps.println("senseid = " + senseid.toString())
 
         // sense=(senseid, lexid, sensekey, synset)
         val sense = dict.getWord(senseid)
@@ -278,7 +278,7 @@ class JWI(
         val senseEntry = dict.getSenseEntry(senseKey)
         if (senseEntry == null) {
             System.err.printf("⚠ Missing sensekey %s for sense at offset %d with pos %s%n", senseKey.toString(), sense.synset.offset, sense.pOS.toString())
-            // throw new IllegalArgumentException(String.format("%s at offset %d with pos %s%n", senseKey.toString(), sense.getSynset().getOffset(),sense.getPOS().toString()));
+            // throw new IllegalArgumentException(String.format("%s at offset %d with pos %s%n", senseKey.toString(), sense.getSynset().getOffset(),sense.getPOS().toString()))
         }
 
         // lexical relations
