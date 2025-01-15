@@ -16,8 +16,8 @@ class JWIExportTests {
     @Test
     fun export() {
         val d = jwi.dict as RAMDictionary
-        d.export(FileOutputStream(f))
-        val d2 = DeserializedRAMDictionary(f)
+        d.export(FileOutputStream(dest))
+        val d2 = DeserializedRAMDictionary(dest)
         val jwi2 = JWI(d2)
         iterateAll(jwi2, System.out)
         walk(jwi2, "love", System.out)
@@ -25,11 +25,11 @@ class JWIExportTests {
 
     companion object {
 
-        private val f = File("ser")
+        private lateinit var source: String
+
+        private lateinit var dest: String
 
         private lateinit var PS: PrintStream
-
-        private lateinit var source: String
 
         private lateinit var jwi: JWI
 
@@ -37,9 +37,10 @@ class JWIExportTests {
         @BeforeAll
         @Throws(IOException::class)
         fun init() {
-            source = System.getProperty("SOURCE")
-            jwi = JWI(source, null, ramFactory)
             PS = makePS()
+            source = System.getProperty("SOURCE")
+            dest = System.getProperty("SER") ?: "$source.ser"
+            jwi = JWI(source, null, ramFactory)
         }
     }
 }
