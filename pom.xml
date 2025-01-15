@@ -2,14 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>io.github.x-englishwordnet</groupId>
-  <artifactId>jwikuse</artifactId>
+  <groupId>io.github.oewntk</groupId>
+  <artifactId>kwikuse</artifactId>
   <packaging>jar</packaging>
   <version>2.4.1.1</version>
 
   <name>Java WordNet Interface Utils in Kotlin</name>
   <description>Java library utils for JWI in Kotlin</description>
-  <url>https://github.com/x-englishwordnet/jwiuse</url>
+  <url>https://github.com/oewntk/jwiuse</url>
 
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -20,8 +20,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>io.github.x-englishwordnet</groupId>
-      <artifactId>jwik</artifactId>
+      <groupId>io.github.oewntk</groupId>
+      <artifactId>kwi</artifactId>
       <version>2.4.1.1</version>
       <scope>compile</scope>
     </dependency>
@@ -244,15 +244,15 @@
   </distributionManagement>
 
   <scm>
-    <url>https://github.com/x-englishwordnet/jwi</url>
-    <connection>scm:git:git://github.com/x-englishwordnet/jwi.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com:x-englishwordnet/jwi.git</developerConnection>
+    <url>https://github.com/oewntk/jwi</url>
+    <connection>scm:git:git://github.com/oewntk/jwi.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com:oewntk/jwi.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
 
   <issueManagement>
     <system>GitHub</system>
-    <url>https://github.com/x-englishwordnet/jwi/issues</url>
+    <url>https://github.com/oewntk/jwi/issues</url>
   </issueManagement>
 
   <licenses>
@@ -264,8 +264,8 @@
   </licenses>
 
   <organization>
-    <name>com.github.x-englishwordnet</name>
-    <url>https://github.com/x-englishwordnet</url>
+    <name>com.github.oewntk</name>
+    <url>https://github.com/oewntk</url>
   </organization>
 
   <developers>
