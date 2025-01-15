@@ -49,7 +49,7 @@ class JWIIterateTests {
 
     @Test
     fun iterateSenseKeys() {
-        jwi.forAllSensekeys { PS.println(it) }
+        jwi.forAllSenseKeys { PS.println(it) }
     }
 
     companion object {
@@ -62,13 +62,13 @@ class JWIIterateTests {
         fun iterateAll(jwi: JWI, ps: PrintStream) {
             jwi.forAllLemmas { ps.println(it) }
             jwi.forAllSenses { ps.println(it) }
+            jwi.forAllSenseKeys { ps.println(it) }
             jwi.forAllSynsets { ps.println(it) }
             jwi.forAllSenseEntries { ps.println(it) }
             jwi.forAllSenseRelations { ps.println(it) }
             jwi.forAllFlatSenseRelations { ps.println(it) }
             jwi.forAllSynsetRelations { ps.println(it) }
             jwi.forAllFlatSynsetRelations { ps.println(it) }
-            jwi.forAllSensekeys { ps.println(it) }
         }
 
         @JvmStatic
