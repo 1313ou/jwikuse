@@ -2,7 +2,7 @@ package org.jwi.use
 
 import edu.mit.jwi.data.parse.SenseKeyParser
 import edu.mit.jwi.item.SenseKey
-import edu.mit.jwi.item.Word
+import edu.mit.jwi.item.Sense
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.io.IOException
@@ -37,7 +37,7 @@ class XSensekeysTests {
         private fun resolveSpecificSensekeys(jwi: JWI, vararg sks: String) {
             sks.forEach {
                 val sk: SenseKey = SenseKeyParser.parseLine(it)
-                val sense = jwi.dict.getWord(sk)
+                val sense = jwi.dict.getSense(sk)
                 PS.println("sensekey $sk refers to sense $sense with lemma ${sense?.lemma}")
             }
         }
@@ -53,7 +53,7 @@ class XSensekeysTests {
             val count = AtomicInteger(0)
             val errCount = AtomicInteger(0)
 
-            jwi.forAllSenses(Consumer forAllSenses@{ s: Word ->
+            jwi.forAllSenses(Consumer forAllSenses@{ s: Sense ->
                 val sk = s.senseKey
                 val se = jwi.dict.getSenseEntry(sk)
                 if (se == null) {
@@ -70,7 +70,7 @@ class XSensekeysTests {
             val count = AtomicInteger(0)
             val errCount = AtomicInteger(0)
 
-            jwi.forAllSenses(Consumer forAllSenses@{ s: Word? ->
+            jwi.forAllSenses(Consumer forAllSenses@{ s: Sense? ->
                 val sk = s!!.senseKey
                 val se = jwi.dict.getSenseEntry(sk)
                 if (se == null) {

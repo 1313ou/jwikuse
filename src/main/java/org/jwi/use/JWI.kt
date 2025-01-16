@@ -9,7 +9,6 @@ import java.io.IOException
 import java.io.PrintStream
 import java.net.URL
 import java.util.function.Consumer
-import kotlin.Throws
 import kotlin.system.measureTimeMillis
 
 val defaultFactory: (url: URL, config: Config?) -> IDictionary = { url: URL, config: Config? -> Dictionary(url, config) }
@@ -47,11 +46,11 @@ class JWI(
         }
     }
 
-    fun seqAllSenses(): Sequence<Word> = sequence {
+    fun seqAllSenses(): Sequence<Sense> = sequence {
         POS.entries.forEach { pos ->
             dict.getIndexWordIterator(pos).forEach {
                 it.wordIDs.forEach {
-                    val sense = dict.getWord(it)!!
+                    val sense = dict.getSense(it)!!
                     yield(sense)
                 }
             }
@@ -101,11 +100,11 @@ class JWI(
         }
     }
 
-    fun seqAllSenseRelations(): Sequence<Relation<Word>> = sequence {
+    fun seqAllSenseRelations(): Sequence<Relation<Sense>> = sequence {
         seqAllSenses().forEach { sense ->
             sense.related.keys.forEach { ptr ->
                 sense.related[ptr]!!.forEach {
-                    val related = dict.getWord(it)!!
+                    val related = dict.getSense(it)!!
                     yield(Relation(ptr.toString(), sense to related))
                 }
 
@@ -113,11 +112,11 @@ class JWI(
         }
     }
 
-    fun seqAllFlatSenseRelations(): Sequence<Pair<Word, Word>> = sequence {
+    fun seqAllFlatSenseRelations(): Sequence<Pair<Sense, Sense>> = sequence {
         seqAllSenses().forEach { sense ->
             sense.related.keys.forEach { ptr ->
                 sense.allRelated.forEach {
-                    val related = dict.getWord(it)!!
+                    val related = dict.getSense(it)!!
                     yield(sense to related)
                 }
             }
@@ -126,13 +125,13 @@ class JWI(
 
     // F R O M   W O R D
 
-    fun seqAllSenseIDs(lemma: String, pos: POS): Sequence<IWordID> = sequence {
+    fun seqAllSenseIDs(lemma: String, pos: POS): Sequence<ISenseID> = sequence {
         dict.getIndexWord(lemma, pos)!!.wordIDs.forEach {
             yield(it)
         }
     }
 
-    fun seqAllSenseIDs(lemma: String): Sequence<IWordID> = sequence {
+    fun seqAllSenseIDs(lemma: String): Sequence<ISenseID> = sequence {
         POS.entries.forEach { pos ->
             seqAllSenseIDs(lemma, pos).forEach {
                 yield(it)
@@ -140,18 +139,18 @@ class JWI(
         }
     }
 
-    fun seqAllSenses(lemma: String, pos: POS): Sequence<Word> = sequence {
+    fun seqAllSenses(lemma: String, pos: POS): Sequence<Sense> = sequence {
         seqAllSenseIDs(lemma, pos)
             .forEach {
-                val sense = dict.getWord(it)!!
+                val sense = dict.getSense(it)!!
                 yield(sense)
             }
     }
 
-    fun seqAllSenses(lemma: String): Sequence<Word> = sequence {
+    fun seqAllSenses(lemma: String): Sequence<Sense> = sequence {
         seqAllSenseIDs(lemma)
             .forEach {
-                val sense = dict.getWord(it)!!
+                val sense = dict.getSense(it)!!
                 yield(sense)
             }
     }
@@ -162,7 +161,7 @@ class JWI(
         seqAllLemmas().forEach { f?.accept(it) }
     }
 
-    fun forAllSenses(f: Consumer<Word>?) {
+    fun forAllSenses(f: Consumer<Sense>?) {
         seqAllSenses().forEach { f?.accept(it) }
     }
 
@@ -186,29 +185,29 @@ class JWI(
         seqAllFlatSynsetRelations().forEach { f?.accept(it) }
     }
 
-    fun forAllSenseRelations(f: Consumer<Relation<Word>>?) {
+    fun forAllSenseRelations(f: Consumer<Relation<Sense>>?) {
         seqAllSenseRelations().forEach { f?.accept(it) }
     }
 
-    fun forAllFlatSenseRelations(f: Consumer<Pair<Word, Word>>?) {
+    fun forAllFlatSenseRelations(f: Consumer<Pair<Sense, Sense>>?) {
         seqAllFlatSenseRelations().forEach { f?.accept(it) }
     }
 
     // S E N S E   E X P L O R A T I O N
 
-    fun forAllSenseIDs(lemma: String, f: Consumer<IWordID>?) {
+    fun forAllSenseIDs(lemma: String, f: Consumer<ISenseID>?) {
         seqAllSenseIDs(lemma).forEach { f?.accept(it) }
     }
 
-    fun forAllSenses(lemma: String, f: Consumer<Word>?) {
+    fun forAllSenses(lemma: String, f: Consumer<Sense>?) {
         seqAllSenses(lemma).forEach { f?.accept(it) }
     }
 
-    fun forAllSenseIDs(lemma: String, pos: POS, f: Consumer<IWordID>?) {
+    fun forAllSenseIDs(lemma: String, pos: POS, f: Consumer<ISenseID>?) {
         seqAllSenseIDs(lemma, pos).forEach { f?.accept(it) }
     }
 
-    fun forAllSenses(lemma: String, pos: POS, f: Consumer<Word>?) {
+    fun forAllSenses(lemma: String, pos: POS, f: Consumer<Sense>?) {
         seqAllSenses(lemma, pos).forEach { f?.accept(it) }
     }
 
@@ -230,7 +229,7 @@ class JWI(
         }
     }
 
-    fun walk(idx: IndexWord, ps: PrintStream) {
+    fun walk(idx: SenseIndex, ps: PrintStream) {
         // pointers
         idx.pointers.forEach {
             ps.println("has relation = $it")
@@ -241,9 +240,9 @@ class JWI(
         }
     }
 
-    fun walk(senseid: IWordID, ps: PrintStream) {
+    fun walk(senseid: ISenseID, ps: PrintStream) {
         ps.println("-".repeat(80))
-        walk(dict.getWord(senseid)!!, ps)
+        walk(dict.getSense(senseid)!!, ps)
 
         // synset
         dict.getSynset(senseid.synsetID)!!.let {
@@ -252,7 +251,7 @@ class JWI(
         }
     }
 
-    fun walk(sense: Word, ps: PrintStream) {
+    fun walk(sense: Sense, ps: PrintStream) {
         ps.println("● sense = $sense lexid=${sense.lexicalID} sensekey=${sense.senseKey} ${sense.adjectiveMarker?.let { "  marker = $it" } ?: ""}")
 
         // lexical relations
@@ -266,11 +265,11 @@ class JWI(
         ps.println("  sensenum=${senseEntry.senseNumber} tagcnt=${senseEntry.tagCount}")
     }
 
-    fun walk(relatedMap: Map<Pointer, List<IWordID>>, ps: PrintStream) {
+    fun walk(relatedMap: Map<Pointer, List<ISenseID>>, ps: PrintStream) {
         relatedMap.entries.forEach {
             val pointer = it.key
             it.value.forEach {
-                val related = dict.getWord(it)!!
+                val related = dict.getSense(it)!!
                 ps.println("  $pointer lemma=${related.lemma} synset=${related.synset}")
             }
         }
