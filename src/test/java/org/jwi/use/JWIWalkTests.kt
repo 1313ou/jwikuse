@@ -8,15 +8,20 @@ import java.io.PrintStream
 class JWIWalkTests {
 
     @Test
-    fun walkWord() {
-        jwi.walk(word, PS)
+    fun walkWords() {
+        words.splitToSequence(',').forEach {
+            PS.println("@".repeat(80))
+            PS.println(it)
+            PS.println("@".repeat(80))
+            walk(jwi, it, PS)
+        }
     }
 
     companion object {
 
         private lateinit var PS: PrintStream
 
-        private lateinit var word: String
+        private lateinit var words: String
 
         private lateinit var jwi: JWI
 
@@ -29,7 +34,7 @@ class JWIWalkTests {
         @BeforeAll
         @Throws(IOException::class)
         fun init() {
-            word = System.getProperty("WORD")
+            words = System.getProperty("WORD")
             jwi = makeJWI()
             PS = makePS()
         }
