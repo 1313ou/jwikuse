@@ -125,13 +125,13 @@ class JWI(
 
     // F R O M   W O R D
 
-    fun seqAllSenseIDs(lemma: String, pos: POS): Sequence<ISenseID> = sequence {
+    fun seqAllSenseIDs(lemma: String, pos: POS): Sequence<SenseID> = sequence {
         dict.getIndexWord(lemma, pos)!!.senseIDs.forEach {
             yield(it)
         }
     }
 
-    fun seqAllSenseIDs(lemma: String): Sequence<ISenseID> = sequence {
+    fun seqAllSenseIDs(lemma: String): Sequence<SenseID> = sequence {
         POS.entries.forEach { pos ->
             seqAllSenseIDs(lemma, pos).forEach {
                 yield(it)
@@ -195,7 +195,7 @@ class JWI(
 
     // S E N S E   E X P L O R A T I O N
 
-    fun forAllSenseIDs(lemma: String, f: Consumer<ISenseID>?) {
+    fun forAllSenseIDs(lemma: String, f: Consumer<SenseID>?) {
         seqAllSenseIDs(lemma).forEach { f?.accept(it) }
     }
 
@@ -203,7 +203,7 @@ class JWI(
         seqAllSenses(lemma).forEach { f?.accept(it) }
     }
 
-    fun forAllSenseIDs(lemma: String, pos: POS, f: Consumer<ISenseID>?) {
+    fun forAllSenseIDs(lemma: String, pos: POS, f: Consumer<SenseID>?) {
         seqAllSenseIDs(lemma, pos).forEach { f?.accept(it) }
     }
 
@@ -240,7 +240,7 @@ class JWI(
         }
     }
 
-    fun walk(senseid: ISenseID, ps: PrintStream) {
+    fun walk(senseid: SenseID, ps: PrintStream) {
         ps.println("-".repeat(80))
         walk(dict.getSense(senseid)!!, ps)
 
@@ -265,7 +265,7 @@ class JWI(
         ps.println("  sensenum=${senseEntry.senseNumber} tagcnt=${senseEntry.tagCount}")
     }
 
-    fun walk(relatedMap: Map<Pointer, List<ISenseID>>, ps: PrintStream) {
+    fun walk(relatedMap: Map<Pointer, List<SenseID>>, ps: PrintStream) {
         relatedMap.entries.forEach {
             val pointer = it.key
             it.value.forEach {
