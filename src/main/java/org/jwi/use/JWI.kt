@@ -49,7 +49,7 @@ class JWI(
     fun seqAllSenses(): Sequence<Sense> = sequence {
         POS.entries.forEach { pos ->
             dict.getIndexWordIterator(pos).forEach {
-                it.wordIDs.forEach {
+                it.senseIDs.forEach {
                     val sense = dict.getSense(it)!!
                     yield(sense)
                 }
@@ -126,7 +126,7 @@ class JWI(
     // F R O M   W O R D
 
     fun seqAllSenseIDs(lemma: String, pos: POS): Sequence<ISenseID> = sequence {
-        dict.getIndexWord(lemma, pos)!!.wordIDs.forEach {
+        dict.getIndexWord(lemma, pos)!!.senseIDs.forEach {
             yield(it)
         }
     }
@@ -229,13 +229,13 @@ class JWI(
         }
     }
 
-    fun walk(idx: SenseIndex, ps: PrintStream) {
+    fun walk(idx: Index, ps: PrintStream) {
         // pointers
         idx.pointers.forEach {
             ps.println("has relation = $it")
         }
         // senses
-        idx.wordIDs.forEach {
+        idx.senseIDs.forEach {
             walk(it, ps)
         }
     }

@@ -1,6 +1,6 @@
 package org.jwi.use
 
-import edu.mit.jwi.item.SenseIndex
+import edu.mit.jwi.item.Index
 import edu.mit.jwi.item.POS
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -13,7 +13,7 @@ class JWIWordsTests {
     @Test
     fun searchWord() {
         for (pos in POS.entries) {
-            val index: SenseIndex? = jwi!!.dict.getIndexWord(word!!, pos)
+            val index: Index? = jwi!!.dict.getIndexWord(word!!, pos)
             if (index != null) {
                 val lemma = index.lemma
                 PS.println("$pos $lemma")
