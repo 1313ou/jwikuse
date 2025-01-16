@@ -19,7 +19,7 @@ class JWIIterateLemmasTests {
     @Test
     fun searchLemmas() {
         val start = System.getProperty("TARGET")
-        val actual: Set<String> = jwi!!.dict.getWords(start, null, 0)
+        val actual: Set<String> = jwi!!.dict.getLemmas(start, null, 0)
 
         val expected: MutableSet<String?> = TreeSet<String?>()
         jwi!!.forAllLemmas(Consumer { w: String? ->
