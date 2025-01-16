@@ -1,44 +1,52 @@
 package org.jwi.use
 
+import edu.mit.jwi.data.parse.SenseKeyParser
+import edu.mit.jwi.item.SenseKey
 import edu.mit.jwi.item.Word
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.io.IOException
-import java.io.OutputStream
 import java.io.PrintStream
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
-class SensekeysTests {
+class XSensekeysTests {
 
-    @Test
+    //@Test
     fun findAllSensekeys() {
-        findAllSensekeys(jwi!!)
+        findAllSensekeys(jwi)
+    }
+
+    //@Test
+    fun resolveAllSensekeys() {
+        resolveAllSensekeys(jwi)
     }
 
     @Test
-    fun resolveAllSensekeys() {
-        resolveAllSensekeys(jwi!!)
+    fun sensekeysToSenses() {
+        resolveSpecificSensekeys(jwi, "earth%1:15:00::", "earth%1:15:01::")
+    }
+
+    @Test
+    fun lemmasToMembers() {
+        resolveSpecificLemmas(jwi, "earth", "Earth")
     }
 
     companion object {
 
-        private val VERBOSE = !System.getProperties().containsKey("SILENT")
-
-        private val PS: PrintStream = if (VERBOSE) System.out else PrintStream(object : OutputStream() {
-            override fun write(b: Int) {
-                //DO NOTHING
+        private fun resolveSpecificSensekeys(jwi: JWI, vararg sks: String) {
+            sks.forEach {
+                val sk: SenseKey = SenseKeyParser.parseLine(it)
+                val sense = jwi.dict.getWord(sk)
+                PS.println("sensekey $sk refers to sense $sense with lemma ${sense?.lemma}")
             }
-        })
+        }
 
-        private var jwi: JWI? = null
-
-        @JvmStatic
-        @BeforeAll
-        @Throws(IOException::class)
-        fun init() {
-            val wnHome = System.getProperty("SOURCE")
-            jwi = JWI(wnHome)
+        private fun resolveSpecificLemmas(jwi: JWI, vararg words: String) {
+            words.forEach {
+                val lemmas = jwi.dict.getLemmasStartingWith(it.toString())
+                PS.println("word $it refers to lemmas ${lemmas.joinToString(separator = ",")}")
+            }
         }
 
         private fun findAllSensekeys(jwi: JWI) {
@@ -75,6 +83,18 @@ class SensekeysTests {
                 count.incrementAndGet()
             })
             PS.printf("Sensekeys: %d Errors: %d%n", count.get(), errCount.get())
+        }
+
+        private lateinit var PS: PrintStream
+
+        private lateinit var jwi: JWI
+
+        @JvmStatic
+        @BeforeAll
+        @Throws(IOException::class)
+        fun init() {
+            jwi = makeJWI()
+            PS = makePS()
         }
     }
 }

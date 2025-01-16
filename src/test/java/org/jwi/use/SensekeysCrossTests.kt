@@ -43,13 +43,7 @@ class SensekeysCrossTests {
 
     companion object {
 
-        private val VERBOSE = !System.getProperties().containsKey("SILENT")
-
-        private val PS: PrintStream = if (VERBOSE) System.out else PrintStream(object : OutputStream() {
-            override fun write(b: Int) {
-                //DO NOTHING
-            }
-        })
+        private lateinit var PS: PrintStream
 
         private var jwi1: JWI? = null
 
@@ -59,10 +53,9 @@ class SensekeysCrossTests {
         @BeforeAll
         @Throws(IOException::class)
         fun init() {
-            val wnHome1 = System.getProperty("SOURCE")
-            val wnHome2 = System.getProperty("SOURCE2")
-            jwi1 = JWI(wnHome1)
-            jwi2 = JWI(wnHome2)
+            PS = makePS()
+            jwi1 = makeJWI()
+            jwi2 = makeJWI("SOURCE2")
         }
     }
 }

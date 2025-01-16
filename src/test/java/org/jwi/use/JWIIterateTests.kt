@@ -54,10 +54,6 @@ class JWIIterateTests {
 
     companion object {
 
-        private lateinit var PS: PrintStream
-
-        private lateinit var jwi: JWI
-
         @JvmStatic
         fun iterateAll(jwi: JWI, ps: PrintStream) {
             jwi.forAllLemmas { ps.println(it) }
@@ -70,6 +66,10 @@ class JWIIterateTests {
             jwi.forAllSynsetRelations { ps.println(it) }
             jwi.forAllFlatSynsetRelations { ps.println(it) }
         }
+
+        private lateinit var PS: PrintStream
+
+        private lateinit var jwi: JWI
 
         @JvmStatic
         @BeforeAll

@@ -6,8 +6,8 @@ import java.io.OutputStream
 import java.io.PrintStream
 import java.nio.charset.Charset
 
-fun makeJWI(): JWI {
-    val wnHome = System.getProperty("SOURCE")
+fun makeJWI(wnHomeEnv: String = "SOURCE"): JWI {
+    val wnHome = System.getProperty(wnHomeEnv)
     val factory = System.getProperty("FACTORY")
     val configure = System.getProperty("CONFIGURE").toBoolean()
     val config = Config()
