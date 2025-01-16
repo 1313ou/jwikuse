@@ -212,130 +212,99 @@ class JWI(
         seqAllSenses(lemma, pos).forEach { f?.accept(it) }
     }
 
-// T R E E   E X P L O R A T I O N S
+    // T R E E   E X P L O R A T I O N S
 
     fun walk(lemma: String, ps: PrintStream) {
-        for (pos in POS.entries) {
-            walk(lemma, pos, ps)
+        POS.entries.forEach {
+            walk(lemma, it, ps)
         }
     }
 
     fun walk(lemma: String, pos: POS, ps: PrintStream) {
         // a line in an index file
-        val idx = dict.getIndexWord(lemma, pos)
-        if (idx != null) {
-            // index
+        dict.getIndexWord(lemma, pos)?.let {
             ps.println()
-            ps.println("================================================================================")
-            ps.println("■ pos = " + pos.name)
-            // ps.println("lemma = " + idx.getLemma())
-            walk(idx, ps)
+            ps.println("=".repeat(80))
+            ps.println("■ pos = ${pos.name}")
+            walk(it, ps)
         }
     }
 
     fun walk(idx: IndexWord, ps: PrintStream) {
-        val pointers: Set<Pointer> = idx.pointers
-        for (ptr in pointers) {
-            ps.println("has relation = $ptr")
+        // pointers
+        idx.pointers.forEach {
+            ps.println("has relation = $it")
         }
-
-        // senseid=(lemma, synsetid, sensenum)
-        val senseids: List<IWordID> = idx.wordIDs
-        for (senseid in senseids)  // synset id, sense number, and lemma
-        {
-            walk(senseid, ps)
+        // senses
+        idx.wordIDs.forEach {
+            walk(it, ps)
         }
     }
 
     fun walk(senseid: IWordID, ps: PrintStream) {
-        ps.println("--------------------------------------------------------------------------------")
-
-        //ps.println("senseid = " + senseid.toString())
-
-        // sense=(senseid, lexid, sensekey, synset)
-        val sense = dict.getWord(senseid)
-        walk(sense!!, ps)
+        ps.println("-".repeat(80))
+        walk(dict.getWord(senseid)!!, ps)
 
         // synset
-        val synsetid = senseid.synsetID
-        val synset = dict.getSynset(synsetid)
-        ps.printf("● synset = %s%n", toString(synset!!))
-
-        walk(synset, 1, ps)
+        dict.getSynset(senseid.synsetID)!!.let {
+            ps.println("● synset = $it")
+            walk(it, 1, ps)
+        }
     }
 
     fun walk(sense: Word, ps: PrintStream) {
-        ps.printf("● sense: %s lexid: %d sensekey: %s%n", sense.toString(), sense.lexicalID, sense.senseKey)
-
-        // adj marker
-        val marker = sense.adjectiveMarker
-        if (marker != null) {
-            ps.println("  marker = $marker")
-        }
-
-        // sensekey
-        val senseKey = sense.senseKey
-        val senseEntry = dict.getSenseEntry(senseKey)
-        if (senseEntry == null) {
-            System.err.printf("⚠ Missing sensekey %s for sense at offset %d with pos %s%n", senseKey.toString(), sense.synset.offset, sense.pOS.toString())
-            // throw new IllegalArgumentException(String.format("%s at offset %d with pos %s%n", senseKey.toString(), sense.getSynset().getOffset(),sense.getPOS().toString()))
-        }
+        ps.println("● sense = $sense lexid=${sense.lexicalID} sensekey=${sense.senseKey} ${sense.adjectiveMarker?.let { "  marker = $it" } ?: ""}")
 
         // lexical relations
-        val relatedMap: Map<Pointer, List<IWordID>> = sense.related
-        walk(relatedMap, ps)
+        walk(sense.related, ps)
 
         // verb frames
-        val verbFrames: List<VerbFrame>? = sense.verbFrames
-        walk(verbFrames, sense.lemma, ps)
+        walk(sense.verbFrames, sense.lemma, ps)
 
-        ps.printf("  sensenum: %s tag cnt:%s%n", senseEntry?.senseNumber ?: "<missing>", senseEntry?.tagCount ?: "<missing>")
+        // sense entry
+        val senseEntry = dict.getSenseEntry(sense.senseKey)!!
+        ps.println("  sensenum=${senseEntry.senseNumber} tagcnt=${senseEntry.tagCount}")
     }
 
     fun walk(relatedMap: Map<Pointer, List<IWordID>>, ps: PrintStream) {
-        for (entry in relatedMap.entries) {
-            val pointer = entry.key
-            for (relatedId in entry.value) {
-                val related = dict.getWord(relatedId)
-                ps.printf("  %s lemma:%s synset:%s%n", pointer, related!!.lemma, related.synset.toString())
+        relatedMap.entries.forEach {
+            val pointer = it.key
+            it.value.forEach {
+                val related = dict.getWord(it)!!
+                ps.println("  $pointer lemma=${related.lemma} synset=${related.synset}")
             }
         }
     }
 
     fun walk(verbFrames: List<VerbFrame>?, lemma: String, ps: PrintStream) {
-        if (verbFrames != null) {
-            for (verbFrame in verbFrames) {
-                ps.printf("  verb frame: %s : %s%n", verbFrame.template, verbFrame.instantiateTemplate(lemma))
-            }
+        verbFrames?.forEach {
+            ps.println("  verb frame=${it.template} ${it.instantiateTemplate(lemma)}")
         }
     }
 
     fun walk(synset: Synset, level: Int, ps: PrintStream) {
-        val indentSpace = String(CharArray(level)).replace('\u0000', '\t')
+        val indentSpace = "\t".repeat(level)
         val links: Map<Pointer, List<SynsetID>> = synset.related
-        for (p in links.keys) {
-            ps.printf("%s🡆 %s%n", indentSpace, p.name)
-            val relations2: List<SynsetID> = links[p]!!
-            walk(relations2, p, level, ps)
+        links.keys.forEach {
+            ps.println("$indentSpace🡆 ${it.name}")
+            walk(links[it]!!, it, level, ps)
         }
     }
 
     fun walk(relations2: List<SynsetID>, p: Pointer, level: Int, ps: PrintStream) {
-        val indentSpace = String(CharArray(level)).replace('\u0000', '\t')
-        for (synsetid2 in relations2) {
-            val synset2 = dict.getSynset(synsetid2)
-            ps.printf("%s%s%n", indentSpace, toString(synset2!!))
-
+        val indentSpace = "\t".repeat(level)
+        relations2.forEach {
+            val synset2 = dict.getSynset(it)!!
+            ps.println("$indentSpace$synset2")
             walk(synset2, p, level + 1, ps)
         }
     }
 
     fun walk(synset: Synset, p: Pointer, level: Int, ps: PrintStream) {
         val indentSpace = String(CharArray(level)).replace('\u0000', '\t')
-        val relations2: List<SynsetID> = synset.getRelatedFor(p)
-        for (synsetid2 in relations2) {
-            val synset2 = dict.getSynset(synsetid2)
-            ps.printf("%s%s%n", indentSpace, toString(synset2!!))
+        synset.getRelatedFor(p).forEach {
+            val synset2 = dict.getSynset(it)!!
+            ps.println("$indentSpace$synset2")
             if (canRecurse(p)) {
                 walk(synset2, p, level + 1, ps)
             }
@@ -352,7 +321,7 @@ class JWI(
             config: Config? = null,
             factory: (url: URL, config: Config?) -> IDictionary,
         ): IDictionary {
-            System.out.printf("FROM %s%n", wnHome)
+            println("FROM $wnHome")
 
             // construct the URL to the WordNet dictionary directory
             val home = File(wnHome).toURI().toURL()
@@ -380,8 +349,8 @@ class JWI(
             println("URL dictionary factory: $tag")
             return when (tag) {
                 "SOURCE" -> { url: URL, config: Config? -> DataSourceDictionary(url, config) }
-                "RAM"    -> { url: URL, config: Config? -> Dictionary(url, config) }
-                else     -> { url: URL, config: Config? -> RAMDictionary(url, IMMEDIATE_LOAD, config) }
+                "RAM"    -> { url: URL, config: Config? -> RAMDictionary(url, IMMEDIATE_LOAD, config) }
+                else     -> { url: URL, config: Config? -> Dictionary(url, config) }
             }
         }
 
