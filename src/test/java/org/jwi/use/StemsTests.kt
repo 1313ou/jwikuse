@@ -10,7 +10,7 @@ class StemsTests {
 
     @Test
     fun lemmasToMembers() {
-        stems(jwi, "works", "does", "finished", "boatsful")
+        stems(jwi, "works", "does", "finished", "boatsful", "hearts breakers")
     }
 
     companion object {
