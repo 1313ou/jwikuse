@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.jwi.use.JWIIterateTests.Companion.iterateAll
 import org.jwi.use.JWIWalkTests.Companion.walk
-import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.PrintStream
