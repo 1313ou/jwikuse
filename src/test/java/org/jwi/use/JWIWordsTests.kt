@@ -13,7 +13,7 @@ class JWIWordsTests {
     @Test
     fun searchWord() {
         for (pos in POS.entries) {
-            val index: Index? = jwi!!.dict.getIndexWord(word!!, pos)
+            val index: Index? = jwi!!.dict.getIndex(word!!, pos)
             if (index != null) {
                 val lemma = index.lemma
                 PS.println("$pos $lemma")

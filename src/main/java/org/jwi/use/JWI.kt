@@ -39,7 +39,7 @@ class JWI(
 
     fun seqAllLemmas(): Sequence<String> = sequence {
         POS.entries.forEach { pos ->
-            dict.getIndexWordIterator(pos).forEach {
+            dict.getIndexIterator(pos).forEach {
                 val lemma = it.lemma
                 yield(lemma)
             }
@@ -48,7 +48,7 @@ class JWI(
 
     fun seqAllSenses(): Sequence<Sense> = sequence {
         POS.entries.forEach { pos ->
-            dict.getIndexWordIterator(pos).forEach {
+            dict.getIndexIterator(pos).forEach {
                 it.senseIDs.forEach {
                     val sense = dict.getSense(it)!!
                     yield(sense)
@@ -126,7 +126,7 @@ class JWI(
     // F R O M   W O R D
 
     fun seqAllSenseIDs(lemma: String, pos: POS): Sequence<SenseID> = sequence {
-        dict.getIndexWord(lemma, pos)!!.senseIDs.forEach {
+        dict.getIndex(lemma, pos)!!.senseIDs.forEach {
             yield(it)
         }
     }
@@ -221,7 +221,7 @@ class JWI(
 
     fun walk(lemma: String, pos: POS, ps: PrintStream) {
         // a line in an index file
-        dict.getIndexWord(lemma, pos)?.let {
+        dict.getIndex(lemma, pos)?.let {
             ps.println()
             ps.println("=".repeat(80))
             ps.println("■ pos = ${pos.name}")
