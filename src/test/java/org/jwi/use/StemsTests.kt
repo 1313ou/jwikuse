@@ -3,6 +3,7 @@ package org.jwi.use
 import edu.mit.jwi.item.POS
 import edu.mit.jwi.morph.SimpleStemmer
 import edu.mit.jwi.morph.SimpleStemmer.Companion.cartesianProduct
+import edu.mit.jwi.morph.WordnetStemmer
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.io.IOException
@@ -17,19 +18,39 @@ class StemsTests {
         product.forEach { println(it.joinToString(separator = "")) }
     }
 
-    @Test
-    fun wordsToStemsTestVerb() {
-        stems(POS.VERB, "works", "does", "finished")
-    }
+    val verbs = arrayOf("works", "does", "finished", "dies")
+    val nouns = arrayOf("works", "vertices", "suffixes",  "does", "boatsful", "hearts breakers", "mice", "dice", "dies")
+    val both = nouns + verbs
 
     @Test
     fun wordsToStemsTestNoun() {
-        stems(POS.VERB, "works", "does", "boatsful", "hearts breakers")
+        stems(POS.NOUN, *nouns)
+    }
+
+    @Test
+    fun wordsToStemsTestVerb() {
+        stems(POS.VERB, *verbs)
     }
 
     @Test
     fun wordsToStemsTestAll() {
-        stems(null, "works", "does", "finished", "boatsful", "hearts breakers")
+        stems(null, *both)
+    }
+
+    @Test
+    fun wordsToDictStemsTestNouns() {
+        dictStems(POS.NOUN, "boatsful")
+        dictStems(POS.NOUN, *nouns)
+    }
+
+    @Test
+    fun wordsToDictStemsTestVerbs() {
+        dictStems(POS.VERB, *verbs)
+    }
+
+    @Test
+    fun wordsToDictStemsTestAll() {
+        dictStems(null, *both)
     }
 
     companion object {
@@ -37,15 +58,24 @@ class StemsTests {
         private fun stems(pos: POS? = null, vararg words: String) {
             words.forEach {
                 val lemmas = stemmer.findStems(it, null)
-                PS.println("stems of '$it' for POS $pos are ${lemmas.joinToString(separator = "\n\t", prefix = "\n\t")}")
+                PS.println("stems of '$it' for ${pos ?: "any"} are ${lemmas.joinToString(separator = ",", transform = {"'$it'"})}")
             }
         }
+
+        private fun dictStems(pos: POS? = null, vararg words: String) {
+            words.forEach {
+                val lemmas = dictStemmer.findStems(it, pos)
+                PS.println("dict stems of '$it' for ${pos ?: "any"} are ${lemmas.joinToString(separator = ",", transform = {"'$it'"})}")
+            }
+        }
+
+        private lateinit var jwi: JWI
 
         private lateinit var PS: PrintStream
 
         private lateinit var stemmer: SimpleStemmer
 
-        private lateinit var jwi: JWI
+        private lateinit var dictStemmer: WordnetStemmer
 
         @JvmStatic
         @BeforeAll
@@ -53,6 +83,7 @@ class StemsTests {
         fun init() {
             jwi = makeJWI()
             stemmer = SimpleStemmer()
+            dictStemmer = WordnetStemmer(jwi.dict)
             PS = makePS()
         }
     }
