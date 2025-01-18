@@ -4,6 +4,7 @@ import edu.mit.jwi.*
 import edu.mit.jwi.data.FileProvider
 import edu.mit.jwi.data.LoadPolicy.IMMEDIATE_LOAD
 import edu.mit.jwi.item.*
+import edu.mit.jwi.item.Synset.Sense
 import java.io.File
 import java.io.IOException
 import java.io.PrintStream

@@ -2,7 +2,7 @@ package org.jwi.use
 
 import edu.mit.jwi.data.parse.SenseKeyParser
 import edu.mit.jwi.item.SenseKey
-import edu.mit.jwi.item.Sense
+import edu.mit.jwi.item.Synset.Sense
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.io.IOException
@@ -53,7 +53,7 @@ class XSensekeysTests {
             val count = AtomicInteger(0)
             val errCount = AtomicInteger(0)
 
-            jwi.forAllSenses(Consumer forAllSenses@{ s: Sense ->
+            jwi.forAllSenses { s: Sense ->
                 val sk = s.senseKey
                 val se = jwi.dict.getSenseEntry(sk)
                 if (se == null) {
@@ -62,7 +62,7 @@ class XSensekeysTests {
                     return@forAllSenses
                 }
                 count.incrementAndGet()
-            })
+            }
             PS.printf("Sensekeys: %d Errors: %d%n", count.get(), errCount.get())
         }
 
