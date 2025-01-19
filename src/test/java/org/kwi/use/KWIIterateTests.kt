@@ -1,9 +1,12 @@
 package org.kwi.use
 
+import edu.mit.jwi.data.parse.SenseKeyParser
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.io.IOException
 import java.io.PrintStream
+import kotlin.test.assertEquals
 
 class KWIIterateTests {
 
@@ -49,7 +52,12 @@ class KWIIterateTests {
 
     @Test
     fun iterateSenseKeys() {
-        kwi.forAllSenseKeys { PS.println(it) }
+        kwi.forAllSenseKeys {
+            val sk = it.sensekey
+            PS.println(sk)
+            val sk2 = SenseKeyParser.parseSenseKey(sk).sensekey
+            assertEquals(sk, sk2)
+        }
     }
 
     companion object {
