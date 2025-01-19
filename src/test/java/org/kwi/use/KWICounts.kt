@@ -8,7 +8,7 @@ import java.io.PrintStream
 class KWICounts {
 
     @Test
-    fun iterateSenseKeys() {
+    fun count() {
         countAll(kwi, PS)
     }
 
