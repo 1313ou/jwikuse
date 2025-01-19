@@ -3,12 +3,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>io.github.oewntk</groupId>
-  <artifactId>kwikuse</artifactId>
+  <artifactId>kwiuse</artifactId>
   <packaging>jar</packaging>
   <version>2.4.1.1</version>
 
-  <name>Java WordNet Interface Utils in Kotlin</name>
-  <description>Java library utils for JWI in Kotlin</description>
+  <name>Kotlin WordNet Interface Utils</name>
+  <description>Java library utils for KWI</description>
   <url>https://github.com/oewntk/jwiuse</url>
 
   <properties>
