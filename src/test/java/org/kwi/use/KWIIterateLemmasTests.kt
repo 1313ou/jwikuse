@@ -1,4 +1,4 @@
-package org.jwi.use
+package org.kwi.use
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
@@ -9,20 +9,20 @@ import java.io.PrintStream
 import java.util.*
 import java.util.function.Consumer
 
-class JWIIterateLemmasTests {
+class KWIIterateLemmasTests {
 
     @Test
     fun iterateLemmas() {
-        jwi!!.forAllLemmas(Consumer { x: String? -> PS.println(x) })
+        kwi!!.forAllLemmas(Consumer { x: String? -> PS.println(x) })
     }
 
     @Test
     fun searchLemmas() {
         val start = System.getProperty("TARGET")
-        val actual: Set<String> = jwi!!.dict.getLemmasStartingWith(start, null, 0)
+        val actual: Set<String> = kwi!!.dict.getLemmasStartingWith(start, null, 0)
 
         val expected: MutableSet<String?> = TreeSet<String?>()
-        jwi!!.forAllLemmas(Consumer { w: String? ->
+        kwi!!.forAllLemmas(Consumer { w: String? ->
             if (w!!.startsWith(start)) {
                 expected.add(w)
             }
@@ -40,14 +40,14 @@ class JWIIterateLemmasTests {
             }
         })
 
-        private var jwi: JWI? = null
+        private var kwi: KWI? = null
 
         @JvmStatic
         @BeforeAll
         @Throws(IOException::class)
         fun init() {
             val wnHome = System.getProperty("SOURCE")
-            jwi = JWI(wnHome)
+            kwi = KWI(wnHome)
         }
     }
 }

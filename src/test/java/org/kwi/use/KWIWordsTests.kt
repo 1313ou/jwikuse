@@ -1,4 +1,4 @@
-package org.jwi.use
+package org.kwi.use
 
 import edu.mit.jwi.item.Index
 import edu.mit.jwi.item.POS
@@ -8,12 +8,12 @@ import java.io.IOException
 import java.io.OutputStream
 import java.io.PrintStream
 
-class JWIWordsTests {
+class KWIWordsTests {
 
     @Test
     fun searchWord() {
         for (pos in POS.entries) {
-            val index: Index? = jwi!!.dict.getIndex(word!!, pos)
+            val index: Index? = kwi!!.dict.getIndex(word!!, pos)
             if (index != null) {
                 val lemma = index.lemma
                 PS.println("$pos $lemma")
@@ -33,7 +33,7 @@ class JWIWordsTests {
 
         private var word: String? = null
 
-        private var jwi: JWI? = null
+        private var kwi: KWI? = null
 
         @JvmStatic
         @BeforeAll
@@ -41,7 +41,7 @@ class JWIWordsTests {
         fun init() {
             word = System.getProperty("WORD")
             val wnHome = System.getProperty("SOURCE")
-            jwi = JWI(wnHome)
+            kwi = KWI(wnHome)
         }
     }
 }

@@ -1,4 +1,4 @@
-package org.jwi.use
+package org.kwi.use
 
 import edu.mit.jwi.*
 import edu.mit.jwi.data.FileProvider
@@ -17,11 +17,11 @@ val nonCachingFactory: (url: URL, config: Config?) -> IDictionary = { url: URL, 
 val ramFactory: (url: URL, config: Config?) -> IDictionary = { url: URL, config: Config? -> RAMDictionary(url, IMMEDIATE_LOAD, config) }
 
 /**
- * JWI
+ * KWI
  *
  * @author Bernard Bou
  */
-class JWI(
+class KWI(
     val dict: IDictionary,
 ) {
 
@@ -401,9 +401,9 @@ class JWI(
                 else         -> defaultFactory
             }
 
-            lateinit var jwi: JWI
-            val timeTaken = measureTimeMillis { jwi = JWI(wnHome, null, factory) }
-            val timeTaken2 = measureTimeMillis { jwi.walk(lemma, System.out) }
+            lateinit var kwi: KWI
+            val timeTaken = measureTimeMillis { kwi = KWI(wnHome, null, factory) }
+            val timeTaken2 = measureTimeMillis { kwi.walk(lemma, System.out) }
 
             println("Time taken loading : $timeTaken ms")
             println("Time taken browsing: $timeTaken2 ms")

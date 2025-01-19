@@ -1,11 +1,11 @@
-package org.jwi.use
+package org.kwi.use
 
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.io.IOException
 import java.io.PrintStream
 
-class JWIWalkTests {
+class KWIWalkTests {
 
     @Test
     fun walkWords() {
@@ -13,29 +13,29 @@ class JWIWalkTests {
             PS.println("@".repeat(80))
             PS.println(it)
             PS.println("@".repeat(80))
-            walk(jwi, it, PS)
+            walk(kwi, it, PS)
         }
     }
 
     companion object {
 
         @JvmStatic
-        fun walk(jwi: JWI, word: String, ps: PrintStream) {
-            jwi.walk(word, ps)
+        fun walk(kwi: KWI, word: String, ps: PrintStream) {
+            kwi.walk(word, ps)
         }
 
         private lateinit var PS: PrintStream
 
         private lateinit var words: String
 
-        private lateinit var jwi: JWI
+        private lateinit var kwi: KWI
 
         @JvmStatic
         @BeforeAll
         @Throws(IOException::class)
         fun init() {
             words = System.getProperty("WORD")
-            jwi = makeJWI()
+            kwi = makeKWI()
             PS = makePS()
         }
     }

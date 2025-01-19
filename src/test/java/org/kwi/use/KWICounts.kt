@@ -1,31 +1,30 @@
-package org.jwi.use
+package org.kwi.use
 
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.io.IOException
 import java.io.PrintStream
 
-class JWICounts {
+class KWICounts {
 
     @Test
     fun iterateSenseKeys() {
-        val c = jwi.seqAllSenseKeys().count()
-        countAll(jwi, PS)
+        countAll(kwi, PS)
     }
 
     companion object {
 
         @JvmStatic
-        fun countAll(jwi: JWI, ps: PrintStream) {
-            val l = jwi.seqAllLemmas().count()
-            val s = jwi.seqAllSenses().count()
-            val k = jwi.seqAllSenseKeys().count()
-            val e = jwi.seqAllSenseEntries().count()
-            val ry = jwi.seqAllSynsetRelations().count()
-            val fry = jwi.seqAllFlatSynsetRelations().count()
-            val y = jwi.seqAllSynsets().count()
-            val rs = jwi.seqAllSenseRelations().count()
-            val frs = jwi.seqAllFlatSenseRelations().count()
+        fun countAll(kwi: KWI, ps: PrintStream) {
+            val l = kwi.seqAllLemmas().count()
+            val s = kwi.seqAllSenses().count()
+            val k = kwi.seqAllSenseKeys().count()
+            val e = kwi.seqAllSenseEntries().count()
+            val ry = kwi.seqAllSynsetRelations().count()
+            val fry = kwi.seqAllFlatSynsetRelations().count()
+            val y = kwi.seqAllSynsets().count()
+            val rs = kwi.seqAllSenseRelations().count()
+            val frs = kwi.seqAllFlatSenseRelations().count()
             val report = """
                 lemmas           =$l
                 senses           =$s
@@ -40,13 +39,13 @@ class JWICounts {
 
         private lateinit var PS: PrintStream
 
-        private lateinit var jwi: JWI
+        private lateinit var kwi: KWI
 
         @JvmStatic
         @BeforeAll
         @Throws(IOException::class)
         fun init() {
-            jwi = makeJWI()
+            kwi = makeKWI()
             PS = makePS()
         }
     }

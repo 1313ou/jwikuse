@@ -1,7 +1,8 @@
-package org.jwi.use
+package org.kwi.use
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.kwi.use.Comparators
 import java.io.OutputStream
 import java.io.PrintStream
 import java.util.*

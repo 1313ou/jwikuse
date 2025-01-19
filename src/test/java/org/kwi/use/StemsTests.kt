@@ -1,4 +1,4 @@
-package org.jwi.use
+package org.kwi.use
 
 import edu.mit.jwi.item.POS
 import edu.mit.jwi.morph.SimpleStemmer
@@ -69,7 +69,7 @@ class StemsTests {
             }
         }
 
-        private lateinit var jwi: JWI
+        private lateinit var kwi: KWI
 
         private lateinit var PS: PrintStream
 
@@ -81,9 +81,9 @@ class StemsTests {
         @BeforeAll
         @Throws(IOException::class)
         fun init() {
-            jwi = makeJWI()
+            kwi = makeKWI()
             stemmer = SimpleStemmer()
-            dictStemmer = WordnetStemmer(jwi.dict)
+            dictStemmer = WordnetStemmer(kwi.dict)
             PS = makePS()
         }
     }

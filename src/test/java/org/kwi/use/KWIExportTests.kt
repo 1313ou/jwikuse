@@ -1,25 +1,23 @@
-package org.jwi.use
+package org.kwi.use
 
 import edu.mit.jwi.DeserializedRAMDictionary
 import edu.mit.jwi.RAMDictionary
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.jwi.use.JWIIterateTests.Companion.iterateAll
-import org.jwi.use.JWIWalkTests.Companion.walk
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.PrintStream
 
-class JWIExportTests {
+class KWIExportTests {
 
     @Test
     fun export() {
-        val d = jwi.dict as RAMDictionary
+        val d = kwi.dict as RAMDictionary
         d.export(FileOutputStream(dest))
         val d2 = DeserializedRAMDictionary(dest)
-        val jwi2 = JWI(d2)
-        iterateAll(jwi2, System.out)
-        walk(jwi2, "love", System.out)
+        val kwi2 = KWI(d2)
+        KWIIterateTests.Companion.iterateAll(kwi2, System.out)
+        KWIWalkTests.Companion.walk(kwi2, "love", System.out)
     }
 
     companion object {
@@ -30,7 +28,7 @@ class JWIExportTests {
 
         private lateinit var PS: PrintStream
 
-        private lateinit var jwi: JWI
+        private lateinit var kwi: KWI
 
         @JvmStatic
         @BeforeAll
@@ -39,7 +37,7 @@ class JWIExportTests {
             PS = makePS()
             source = System.getProperty("SOURCE")
             dest = System.getProperty("SER") ?: "$source.ser"
-            jwi = JWI(source, null, ramFactory)
+            kwi = KWI(source, null, ramFactory)
         }
     }
 }

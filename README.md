@@ -5,14 +5,14 @@
 <img alt="mavencentral" width="150" src="images/mavencentral.png">
 </p>
 
-# JWIX use
+# KWI use
 
-This presents an API layer above JWIX.
+This presents an API layer above KWI.
 See test classes for usage and samples.
 
 GroupID and ArtifactID on Maven Central:
 
 	<groupId>io.github.oewntk</groupId>
-	<artifactId>jwixuse</artifactId>
+	<artifactId>kwiuse</artifactId>
 	<packaging>jar</packaging>
 	<version>2.4.1.1</version>

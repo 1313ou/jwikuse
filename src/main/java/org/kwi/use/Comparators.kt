@@ -1,4 +1,4 @@
-package org.jwi.use
+package org.kwi.use
 
 object Comparators {
 

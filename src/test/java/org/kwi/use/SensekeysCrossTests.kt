@@ -1,10 +1,9 @@
-package org.jwi.use
+package org.kwi.use
 
 import edu.mit.jwi.item.SenseEntry
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.io.IOException
-import java.io.OutputStream
 import java.io.PrintStream
 
 class SensekeysCrossTests {
@@ -22,8 +21,8 @@ class SensekeysCrossTests {
     }
 
     fun findSensekeysOf(lemma: String) {
-        val ses1: Collection<SenseEntry> = Sensekeys.findSensekeysOf(jwi1!!, lemma)
-        val ses2: Collection<SenseEntry> = Sensekeys.findSensekeysOf(jwi2!!, lemma)
+        val ses1: Collection<SenseEntry> = Sensekeys.findSensekeysOf(kwi1!!, lemma)
+        val ses2: Collection<SenseEntry> = Sensekeys.findSensekeysOf(kwi2!!, lemma)
         PS.println("\n⯆$lemma")
         for (se in ses1) {
             PS.printf("1 %s %s%n", se.senseKey, se.offset)
@@ -34,8 +33,8 @@ class SensekeysCrossTests {
     }
 
     fun lookupSensekey(skStr: String) {
-        val se1 = Sensekeys.lookupSensekey(jwi1!!, skStr)
-        val se2 = Sensekeys.lookupSensekey(jwi2!!, skStr)
+        val se1 = Sensekeys.lookupSensekey(kwi1!!, skStr)
+        val se2 = Sensekeys.lookupSensekey(kwi2!!, skStr)
         PS.println("\n⯈$skStr")
         PS.printf("1 %s %s%n", se1!!.senseKey, se1.offset)
         PS.printf("2 %s %s%n", se2!!.senseKey, se2.offset)
@@ -45,17 +44,17 @@ class SensekeysCrossTests {
 
         private lateinit var PS: PrintStream
 
-        private var jwi1: JWI? = null
+        private var kwi1: KWI? = null
 
-        private var jwi2: JWI? = null
+        private var kwi2: KWI? = null
 
         @JvmStatic
         @BeforeAll
         @Throws(IOException::class)
         fun init() {
             PS = makePS()
-            jwi1 = makeJWI()
-            jwi2 = makeJWI("SOURCE2")
+            kwi1 = makeKWI()
+            kwi2 = makeKWI("SOURCE2")
         }
     }
 }

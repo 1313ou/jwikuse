@@ -1,4 +1,4 @@
-package org.jwi.use
+package org.kwi.use
 
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -9,27 +9,27 @@ class LemmaTests {
 
     @Test
     fun lemmasToMembers() {
-        lemmasStartingWith(jwi, "Earth", "earth")
+        lemmasStartingWith(kwi, "Earth", "earth")
     }
 
     companion object {
 
-        private fun lemmasStartingWith(jwi: JWI, vararg starts: String) {
+        private fun lemmasStartingWith(kwi: KWI, vararg starts: String) {
             starts.forEach {
-                val lemmas = jwi.dict.getLemmasStartingWith(it.toString())
+                val lemmas = kwi.dict.getLemmasStartingWith(it.toString())
                 PS.println("lemmas starting with $it are ${lemmas.joinToString(separator = ",\n\t", prefix = "\n\t")}")
             }
         }
 
         private lateinit var PS: PrintStream
 
-        private lateinit var jwi: JWI
+        private lateinit var kwi: KWI
 
         @JvmStatic
         @BeforeAll
         @Throws(IOException::class)
         fun init() {
-            jwi = makeJWI()
+            kwi = makeKWI()
             PS = makePS()
         }
     }

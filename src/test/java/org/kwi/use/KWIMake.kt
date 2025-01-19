@@ -1,4 +1,4 @@
-package org.jwi.use
+package org.kwi.use
 
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -6,15 +6,15 @@ import java.io.IOException
 import java.io.PrintStream
 import kotlin.system.measureTimeMillis
 
-class JWIMake {
+class KWIMake {
 
-    private lateinit var jwi: JWI
+    private lateinit var kwi: KWI
 
     @Test
     @Throws(IOException::class)
     fun makeTest() {
         val timeTaken = measureTimeMillis {
-            jwi = makeJWI()
+            kwi = makeKWI()
         }
         println("Time taken loading : $timeTaken ms")
     }

@@ -1,4 +1,4 @@
-package org.jwi.use
+package org.kwi.use
 
 import edu.mit.jwi.data.parse.SenseKeyParser
 import edu.mit.jwi.item.SenseKey
@@ -14,48 +14,48 @@ class XSensekeysTests {
 
     //@Test
     fun findAllSensekeys() {
-        findAllSensekeys(jwi)
+        findAllSensekeys(kwi)
     }
 
     //@Test
     fun resolveAllSensekeys() {
-        resolveAllSensekeys(jwi)
+        resolveAllSensekeys(kwi)
     }
 
     @Test
     fun sensekeysToSenses() {
-        resolveSpecificSensekeys(jwi, "earth%1:15:00::", "earth%1:15:01::")
+        resolveSpecificSensekeys(kwi, "earth%1:15:00::", "earth%1:15:01::")
     }
 
     @Test
     fun lemmasToMembers() {
-        resolveSpecificLemmas(jwi, "earth", "Earth")
+        resolveSpecificLemmas(kwi, "earth", "Earth")
     }
 
     companion object {
 
-        private fun resolveSpecificSensekeys(jwi: JWI, vararg sks: String) {
+        private fun resolveSpecificSensekeys(kwi: KWI, vararg sks: String) {
             sks.forEach {
                 val sk: SenseKey = SenseKeyParser.parseLine(it)
-                val sense = jwi.dict.getSense(sk)
+                val sense = kwi.dict.getSense(sk)
                 PS.println("sensekey $sk refers to sense $sense with lemma ${sense?.lemma}")
             }
         }
 
-        private fun resolveSpecificLemmas(jwi: JWI, vararg words: String) {
+        private fun resolveSpecificLemmas(kwi: KWI, vararg words: String) {
             words.forEach {
-                val lemmas = jwi.dict.getLemmasStartingWith(it.toString())
+                val lemmas = kwi.dict.getLemmasStartingWith(it.toString())
                 PS.println("word $it refers to lemmas ${lemmas.joinToString(separator = ",")}")
             }
         }
 
-        private fun findAllSensekeys(jwi: JWI) {
+        private fun findAllSensekeys(kwi: KWI) {
             val count = AtomicInteger(0)
             val errCount = AtomicInteger(0)
 
-            jwi.forAllSenses { s: Sense ->
+            kwi.forAllSenses { s: Sense ->
                 val sk = s.senseKey
-                val se = jwi.dict.getSenseEntry(sk)
+                val se = kwi.dict.getSenseEntry(sk)
                 if (se == null) {
                     System.err.printf("Sensekey not found %s%n", sk.toString())
                     errCount.incrementAndGet()
@@ -66,13 +66,13 @@ class XSensekeysTests {
             PS.printf("Sensekeys: %d Errors: %d%n", count.get(), errCount.get())
         }
 
-        private fun resolveAllSensekeys(jwi: JWI) {
+        private fun resolveAllSensekeys(kwi: KWI) {
             val count = AtomicInteger(0)
             val errCount = AtomicInteger(0)
 
-            jwi.forAllSenses(Consumer forAllSenses@{ s: Sense? ->
+            kwi.forAllSenses(Consumer forAllSenses@{ s: Sense? ->
                 val sk = s!!.senseKey
-                val se = jwi.dict.getSenseEntry(sk)
+                val se = kwi.dict.getSenseEntry(sk)
                 if (se == null) {
                     System.err.printf("Sensekey not found %s%n", sk.toString())
                     errCount.incrementAndGet()
@@ -87,13 +87,13 @@ class XSensekeysTests {
 
         private lateinit var PS: PrintStream
 
-        private lateinit var jwi: JWI
+        private lateinit var kwi: KWI
 
         @JvmStatic
         @BeforeAll
         @Throws(IOException::class)
         fun init() {
-            jwi = makeJWI()
+            kwi = makeKWI()
             PS = makePS()
         }
     }

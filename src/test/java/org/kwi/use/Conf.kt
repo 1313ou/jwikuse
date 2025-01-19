@@ -1,18 +1,18 @@
-package org.jwi.use
+package org.kwi.use
 
 import edu.mit.jwi.Config
-import org.jwi.use.JWI.Companion.makeURLFactory
+import org.kwi.use.KWI.Companion.makeURLFactory
 import java.io.OutputStream
 import java.io.PrintStream
 import java.nio.charset.Charset
 
-fun makeJWI(wnHomeEnv: String = "SOURCE"): JWI {
+fun makeKWI(wnHomeEnv: String = "SOURCE"): KWI {
     val wnHome = System.getProperty(wnHomeEnv)
     val factory = System.getProperty("FACTORY")
     val configure = System.getProperty("CONFIGURE").toBoolean()
     val config = Config()
     config.charSet = Charset.defaultCharset()
-    return JWI(wnHome, config = if (configure) config else null, factory = makeURLFactory(factory))
+    return KWI(wnHome, config = if (configure) config else null, factory = makeURLFactory(factory))
 }
 
 private val NULLPS = PrintStream(object : OutputStream() {
