@@ -4,6 +4,7 @@ import edu.mit.jwi.item.Index
 import edu.mit.jwi.item.POS
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.kwi.use.KWI.Companion.fromFile
 import java.io.IOException
 import java.io.OutputStream
 import java.io.PrintStream
@@ -41,7 +42,7 @@ class KWIWordsTests {
         fun init() {
             word = System.getProperty("WORD")
             val wnHome = System.getProperty("SOURCE")
-            kwi = KWI(wnHome)
+            kwi = KWI(fromFile(wnHome))
         }
     }
 }

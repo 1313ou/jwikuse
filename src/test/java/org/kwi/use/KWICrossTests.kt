@@ -2,6 +2,7 @@ package org.kwi.use
 
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.kwi.use.KWI.Companion.fromFile
 import java.io.IOException
 import java.io.PrintStream
 
@@ -52,8 +53,8 @@ class KWICrossTests {
             word = System.getProperty("WORD")
             wnHome1 = System.getProperty("SOURCE")
             wnHome2 = System.getProperty("SOURCE2")
-            kwi1 = KWI(wnHome1!!)
-            kwi2 = KWI(wnHome2!!)
+            kwi1 = KWI(fromFile(wnHome1!!))
+            kwi2 = KWI(fromFile(wnHome2!!))
         }
     }
 }

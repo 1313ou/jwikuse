@@ -1,6 +1,7 @@
 package org.kwi.use
 
 import edu.mit.jwi.Config
+import org.kwi.use.KWI.Companion.fromFile
 import org.kwi.use.KWI.Companion.makeURLFactory
 import java.io.OutputStream
 import java.io.PrintStream
@@ -12,7 +13,7 @@ fun makeKWI(wnHomeEnv: String = "SOURCE"): KWI {
     val configure = System.getProperty("CONFIGURE").toBoolean()
     val config = Config()
     config.charSet = Charset.defaultCharset()
-    return KWI(wnHome, config = if (configure) config else null, factory = makeURLFactory(factory))
+    return KWI(fromFile(wnHome, config = if (configure) config else null, factory = makeURLFactory(factory)))
 }
 
 private val NULLPS = PrintStream(object : OutputStream() {

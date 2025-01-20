@@ -1,8 +1,10 @@
 package org.kwi.use
 
+import edu.mit.jwi.IDictionary
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.kwi.use.KWI.Companion.fromFile
 import java.io.IOException
 import java.io.OutputStream
 import java.io.PrintStream
@@ -47,7 +49,7 @@ class KWIIterateLemmasTests {
         @Throws(IOException::class)
         fun init() {
             val wnHome = System.getProperty("SOURCE")
-            kwi = KWI(wnHome)
+            kwi = KWI(fromFile(wnHome))
         }
     }
 }

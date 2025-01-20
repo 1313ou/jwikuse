@@ -25,13 +25,6 @@ class KWI(
     val dict: IDictionary,
 ) {
 
-    @JvmOverloads
-    constructor(
-        wnHome: String,
-        config: Config? = null,
-        factory: (url: URL, config: Config?) -> IDictionary = defaultFactory,
-    ) : this(makeDict(wnHome, config, factory))
-
     init {
         dict.open()
     }
@@ -316,22 +309,47 @@ class KWI(
         // H E L P E R S
 
         @JvmStatic
-        fun makeDict(
+        fun fromFile(
+            /**
+             * the WordNet dictionary directory
+             */
             wnHome: String,
             config: Config? = null,
-            factory: (url: URL, config: Config?) -> IDictionary,
+            factory: (url: URL, config: Config?) -> IDictionary = defaultFactory,
         ): IDictionary {
-            println("FROM $wnHome")
+            println("FROM DIR $wnHome")
+            val url = File(wnHome).toURI().toURL()
+            return fromURL(url, config, factory)
+        }
 
-            // construct the URL to the WordNet dictionary directory
-            val home = File(wnHome).toURI().toURL()
+        @JvmStatic
+        fun fromURL(
+            /**
+             * the URL to the WordNet dictionary directory
+             */
+            url: URL,
+            config: Config? = null,
+            factory: (url: URL, config: Config?) -> IDictionary = defaultFactory,
+        ): IDictionary {
+            println("FROM URL $url")
 
             // construct the dictionary object and open it
-            val dict = factory.invoke(home, config)
+            val dict = factory.invoke(url, config)
 
             // open it
             dict.open()
             return dict
+        }
+
+        @JvmStatic
+        fun fromSer(
+            /**
+             * The serialized dictionary file
+             */
+            serPath: String,
+        ): IDictionary {
+            println("FROM SER $serPath")
+            return DeserializedRAMDictionary(serPath)
         }
 
         @JvmStatic
@@ -402,7 +420,7 @@ class KWI(
             }
 
             lateinit var kwi: KWI
-            val timeTaken = measureTimeMillis { kwi = KWI(wnHome, null, factory) }
+            val timeTaken = measureTimeMillis { kwi = KWI(fromFile(wnHome, factory=factory)) }
             val timeTaken2 = measureTimeMillis { kwi.walk(lemma, System.out) }
 
             println("Time taken loading : $timeTaken ms")
