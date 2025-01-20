@@ -83,8 +83,8 @@ class KWI(
 
     fun seqAllSynsetRelations(): Sequence<Relation<Synset>> = sequence {
         seqAllSynsets().forEach { synset ->
-            synset.related.keys.forEach { ptr ->
-                synset.related[ptr]!!.forEach {
+            synset.relatedSynsets.keys.forEach { ptr ->
+                synset.relatedSynsets[ptr]!!.forEach {
                     val related = dict.getSynset(it)!!
                     yield(Relation(ptr.toString(), synset to related))
                 }
@@ -103,8 +103,8 @@ class KWI(
 
     fun seqAllSenseRelations(): Sequence<Relation<Sense>> = sequence {
         seqAllSenses().forEach { sense ->
-            sense.related.keys.forEach { ptr ->
-                sense.related[ptr]!!.forEach {
+            sense.relatedSenses.keys.forEach { ptr ->
+                sense.relatedSenses[ptr]!!.forEach {
                     val related = dict.getSense(it)!!
                     yield(Relation(ptr.toString(), sense to related))
                 }
@@ -115,8 +115,8 @@ class KWI(
 
     fun seqAllFlatSenseRelations(): Sequence<Pair<Sense, Sense>> = sequence {
         seqAllSenses().forEach { sense ->
-            sense.related.keys.forEach { ptr ->
-                sense.allRelated.forEach {
+            sense.relatedSenses.keys.forEach { ptr ->
+                sense.allRelatedSenses.forEach {
                     val related = dict.getSense(it)!!
                     yield(sense to related)
                 }
@@ -256,7 +256,7 @@ class KWI(
         ps.println("● sense = $sense lexid=${sense.lexicalID} sensekey=${sense.senseKey} ${sense.adjectiveMarker?.let { "  marker = $it" } ?: ""}")
 
         // lexical relations
-        walk(sense.related, ps)
+        walk(sense.relatedSenses, ps)
 
         // verb frames
         walk(sense.verbFrames, sense.lemma, ps)
@@ -284,7 +284,7 @@ class KWI(
 
     fun walk(synset: Synset, level: Int, ps: PrintStream) {
         val indentSpace = "\t".repeat(level)
-        val links: Map<Pointer, List<SynsetID>> = synset.related
+        val links: Map<Pointer, List<SynsetID>> = synset.relatedSynsets
         links.keys.forEach {
             ps.println("$indentSpace🡆 ${it.name}")
             walk(links[it]!!, it, level, ps)
@@ -301,8 +301,8 @@ class KWI(
     }
 
     fun walk(synset: Synset, p: Pointer, level: Int, ps: PrintStream) {
-        val indentSpace = String(CharArray(level)).replace('\u0000', '\t')
-        synset.getRelatedFor(p).forEach {
+        val indentSpace = "\t".repeat(level)
+        synset.getRelatedSynsetsFor(p).forEach {
             val synset2 = dict.getSynset(it)!!
             ps.println("$indentSpace$synset2")
             if (canRecurse(p)) {
