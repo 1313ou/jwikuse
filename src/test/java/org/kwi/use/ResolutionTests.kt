@@ -16,7 +16,7 @@ class ResolutionTests {
     fun headSense() {
         val y = kwi.dict.getSynset(yi)!!
         val hs = y.adjHeadSenseID
-        print("headsense $hs")
+        println("headsense $hs")
     }
 
     @Test
@@ -25,7 +25,7 @@ class ResolutionTests {
         val hsi = y.headSynsetID!!
         val y2 = kwi.dict.getSynset(hsi)!!
         val hs = y2.senses[0]
-        print("headsense $hs")
+        println("headsense $hs")
     }
 
     @Test
@@ -33,7 +33,7 @@ class ResolutionTests {
         val si = SenseIDWithLemma(yi, "zero")
         val s = kwi.dict.getSense(si)!!
         val sk = s.senseKey
-        print("headsense $sk")
+        println("headsense $sk")
     }
 
     companion object {
