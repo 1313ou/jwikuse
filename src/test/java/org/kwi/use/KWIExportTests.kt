@@ -1,10 +1,11 @@
 package org.kwi.use
 
 import edu.mit.jwi.DeserializedRAMDictionary
+import edu.mit.jwi.DictionaryFactory.fromFile
+import edu.mit.jwi.DictionaryFactory.makeFactory
 import edu.mit.jwi.RAMDictionary
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.kwi.use.KWI.Companion.fromFile
 import org.kwi.use.KWIIterateTests.Companion.iterateAll
 import org.kwi.use.KWIWalkTests.Companion.walk
 import java.io.FileOutputStream
@@ -41,7 +42,7 @@ class KWIExportTests {
             PS = makePS()
             source = System.getProperty("SOURCE")
             dest = System.getProperty("SER") ?: "$source.ser"
-            kwi = KWI(fromFile(source, factory=ramFactory))
+            kwi = KWI(fromFile(source, factory=makeFactory("RAM")))
         }
     }
 }

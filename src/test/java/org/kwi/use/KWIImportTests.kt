@@ -1,13 +1,10 @@
 package org.kwi.use
 
-import edu.mit.jwi.DeserializedRAMDictionary
-import edu.mit.jwi.RAMDictionary
+import edu.mit.jwi.DictionaryFactory.fromSer
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.kwi.use.KWI.Companion.fromSer
 import org.kwi.use.KWIIterateTests.Companion.iterateAll
 import org.kwi.use.KWIWalkTests.Companion.walk
-import java.io.FileOutputStream
 import java.io.IOException
 import java.io.PrintStream
 

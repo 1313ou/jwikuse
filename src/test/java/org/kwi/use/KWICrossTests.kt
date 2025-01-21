@@ -1,8 +1,8 @@
 package org.kwi.use
 
+import edu.mit.jwi.DictionaryFactory.fromFile
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.kwi.use.KWI.Companion.fromFile
 import java.io.IOException
 import java.io.PrintStream
 

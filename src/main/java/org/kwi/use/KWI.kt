@@ -1,20 +1,25 @@
 package org.kwi.use
 
 import edu.mit.jwi.*
-import edu.mit.jwi.data.FileProvider
-import edu.mit.jwi.data.LoadPolicy.IMMEDIATE_LOAD
+import edu.mit.jwi.DictionaryFactory.fromFile
+import edu.mit.jwi.DictionaryFactory.makeFactory
+import edu.mit.jwi.Sequences.seqAllFlatSenseRelations
+import edu.mit.jwi.Sequences.seqAllFlatSynsetRelations
+import edu.mit.jwi.Sequences.seqAllLemmas
+import edu.mit.jwi.Sequences.seqAllSenseEntries
+import edu.mit.jwi.Sequences.seqAllSenseIDs
+import edu.mit.jwi.Sequences.seqAllSenseKeys
+import edu.mit.jwi.Sequences.seqAllSenseRelations
+import edu.mit.jwi.Sequences.seqAllSenses
+import edu.mit.jwi.Sequences.seqAllSynsetRelations
+import edu.mit.jwi.Sequences.seqAllSynsets
+import edu.mit.jwi.Sequences.seqMembers
 import edu.mit.jwi.item.*
 import edu.mit.jwi.item.Synset.Sense
-import java.io.File
 import java.io.IOException
 import java.io.PrintStream
-import java.net.URL
 import java.util.function.Consumer
 import kotlin.system.measureTimeMillis
-
-val defaultFactory: (url: URL, config: Config?) -> IDictionary = { url: URL, config: Config? -> Dictionary(url, config) }
-val nonCachingFactory: (url: URL, config: Config?) -> IDictionary = { url: URL, config: Config? -> DataSourceDictionary(FileProvider(url), config) }
-val ramFactory: (url: URL, config: Config?) -> IDictionary = { url: URL, config: Config? -> RAMDictionary(url, IMMEDIATE_LOAD, config) }
 
 /**
  * KWI
@@ -29,180 +34,60 @@ class KWI(
         dict.open()
     }
 
-    // S E Q U E N C E S
-
-    fun seqAllLemmas(): Sequence<String> = sequence {
-        POS.entries.forEach { pos ->
-            dict.getIndexIterator(pos).forEach {
-                val lemma = it.lemma
-                yield(lemma)
-            }
-        }
-    }
-
-    fun seqAllSenses(): Sequence<Sense> = sequence {
-        POS.entries.forEach { pos ->
-            dict.getIndexIterator(pos).forEach {
-                it.senseIDs.forEach {
-                    val sense = dict.getSense(it)!!
-                    yield(sense)
-                }
-            }
-        }
-    }
-
-    fun seqAllSenseKeys(): Sequence<SenseKey> = sequence {
-        seqAllSenses().forEach {
-            val sensekey = it.senseKey
-            yield(sensekey)
-        }
-    }
-
-    fun seqAllSenseEntries(): Sequence<SenseEntry> = sequence {
-        dict.getSenseEntryIterator().forEach {
-            val entry = it
-            yield(entry)
-        }
-    }
-
-    fun seqAllSynsets(): Sequence<Synset> = sequence {
-        POS.entries.forEach { pos ->
-            dict.getSynsetIterator(pos).forEach {
-                val synset = it
-                yield(synset)
-            }
-        }
-    }
-
-    fun seqAllSynsetRelations(): Sequence<Relation<Synset>> = sequence {
-        seqAllSynsets().forEach { synset ->
-            synset.relatedSynsets.keys.forEach { ptr ->
-                synset.relatedSynsets[ptr]!!.forEach {
-                    val related = dict.getSynset(it)!!
-                    yield(Relation(ptr.toString(), synset to related))
-                }
-            }
-        }
-    }
-
-    fun seqAllFlatSynsetRelations(): Sequence<Pair<Synset, Synset>> = sequence {
-        seqAllSynsets().forEach { synset ->
-            synset.allRelated.forEach {
-                val related = dict.getSynset(it)!!
-                yield(synset to related)
-            }
-        }
-    }
-
-    fun seqAllSenseRelations(): Sequence<Relation<Sense>> = sequence {
-        seqAllSenses().forEach { sense ->
-            sense.relatedSenses.keys.forEach { ptr ->
-                sense.relatedSenses[ptr]!!.forEach {
-                    val related = dict.getSense(it)!!
-                    yield(Relation(ptr.toString(), sense to related))
-                }
-
-            }
-        }
-    }
-
-    fun seqAllFlatSenseRelations(): Sequence<Pair<Sense, Sense>> = sequence {
-        seqAllSenses().forEach { sense ->
-            sense.relatedSenses.keys.forEach { ptr ->
-                sense.allRelatedSenses.forEach {
-                    val related = dict.getSense(it)!!
-                    yield(sense to related)
-                }
-            }
-        }
-    }
-
-    // F R O M   W O R D
-
-    fun seqAllSenseIDs(lemma: String, pos: POS): Sequence<SenseID> = sequence {
-        dict.getIndex(lemma, pos)!!.senseIDs.forEach {
-            yield(it)
-        }
-    }
-
-    fun seqAllSenseIDs(lemma: String): Sequence<SenseID> = sequence {
-        POS.entries.forEach { pos ->
-            seqAllSenseIDs(lemma, pos).forEach {
-                yield(it)
-            }
-        }
-    }
-
-    fun seqAllSenses(lemma: String, pos: POS): Sequence<Sense> = sequence {
-        seqAllSenseIDs(lemma, pos)
-            .forEach {
-                val sense = dict.getSense(it)!!
-                yield(sense)
-            }
-    }
-
-    fun seqAllSenses(lemma: String): Sequence<Sense> = sequence {
-        seqAllSenseIDs(lemma)
-            .forEach {
-                val sense = dict.getSense(it)!!
-                yield(sense)
-            }
-    }
-
     // I T E R A T I O N S
 
     fun forAllLemmas(f: Consumer<String>?) {
-        seqAllLemmas().forEach { f?.accept(it) }
+        dict.seqAllLemmas().forEach { f?.accept(it) }
     }
 
     fun forAllSenses(f: Consumer<Sense>?) {
-        seqAllSenses().forEach { f?.accept(it) }
+        dict.seqAllSenses().forEach { f?.accept(it) }
     }
 
     fun forAllSenseKeys(f: Consumer<SenseKey>?) {
-        seqAllSenseKeys().forEach { f?.accept(it) }
+        dict.seqAllSenseKeys().forEach { f?.accept(it) }
     }
 
     fun forAllSynsets(f: Consumer<Synset>?) {
-        seqAllSynsets().forEach { f?.accept(it) }
+        dict.seqAllSynsets().forEach { f?.accept(it) }
     }
 
     fun forAllSenseEntries(f: Consumer<SenseEntry>?) {
-        seqAllSenseEntries().forEach { f?.accept(it) }
+        dict.seqAllSenseEntries().forEach { f?.accept(it) }
     }
 
     fun forAllSynsetRelations(f: Consumer<Relation<Synset>>?) {
-        seqAllSynsetRelations().forEach { f?.accept(it) }
+        dict.seqAllSynsetRelations().forEach { f?.accept(it) }
     }
 
     fun forAllFlatSynsetRelations(f: Consumer<Pair<Synset, Synset>>?) {
-        seqAllFlatSynsetRelations().forEach { f?.accept(it) }
+        dict.seqAllFlatSynsetRelations().forEach { f?.accept(it) }
     }
 
     fun forAllSenseRelations(f: Consumer<Relation<Sense>>?) {
-        seqAllSenseRelations().forEach { f?.accept(it) }
+        dict.seqAllSenseRelations().forEach { f?.accept(it) }
     }
 
     fun forAllFlatSenseRelations(f: Consumer<Pair<Sense, Sense>>?) {
-        seqAllFlatSenseRelations().forEach { f?.accept(it) }
+        dict.seqAllFlatSenseRelations().forEach { f?.accept(it) }
     }
 
     // S E N S E   E X P L O R A T I O N
 
     fun forAllSenseIDs(lemma: String, f: Consumer<SenseID>?) {
-        seqAllSenseIDs(lemma).forEach { f?.accept(it) }
+        dict.seqAllSenseIDs(lemma).forEach { f?.accept(it) }
     }
 
     fun forAllSenses(lemma: String, f: Consumer<Sense>?) {
-        seqAllSenses(lemma).forEach { f?.accept(it) }
+        dict.seqAllSenses(lemma).forEach { f?.accept(it) }
     }
 
     fun forAllSenseIDs(lemma: String, pos: POS, f: Consumer<SenseID>?) {
-        seqAllSenseIDs(lemma, pos).forEach { f?.accept(it) }
+        dict.seqAllSenseIDs(lemma, pos).forEach { f?.accept(it) }
     }
 
     fun forAllSenses(lemma: String, pos: POS, f: Consumer<Sense>?) {
-        seqAllSenses(lemma, pos).forEach { f?.accept(it) }
+        dict.seqAllSenses(lemma, pos).forEach { f?.accept(it) }
     }
 
     // T R E E   E X P L O R A T I O N S
@@ -304,96 +189,18 @@ class KWI(
         }
     }
 
+    fun Synset.getMembers(): String {
+        return dict.seqMembers(this).joinToString(separator = ",", prefix = "{", postfix = "}")
+    }
+
+    fun Synset.toString(): String {
+        return "${getMembers()}  $gloss"
+    }
+
     companion object {
 
-        // H E L P E R S
 
-        @JvmStatic
-        fun fromFile(
-            /**
-             * the WordNet dictionary directory
-             */
-            wnHome: String,
-            config: Config? = null,
-            factory: (url: URL, config: Config?) -> IDictionary = defaultFactory,
-        ): IDictionary {
-            println("FROM DIR $wnHome")
-            val url = File(wnHome).toURI().toURL()
-            return fromURL(url, config, factory)
-        }
-
-        @JvmStatic
-        fun fromURL(
-            /**
-             * the URL to the WordNet dictionary directory
-             */
-            url: URL,
-            config: Config? = null,
-            factory: (url: URL, config: Config?) -> IDictionary = defaultFactory,
-        ): IDictionary {
-            println("FROM URL $url")
-
-            // construct the dictionary object and open it
-            val dict = factory.invoke(url, config)
-
-            // open it
-            dict.open()
-            return dict
-        }
-
-        @JvmStatic
-        fun fromSer(
-            /**
-             * The serialized dictionary file
-             */
-            serPath: String,
-        ): IDictionary {
-            println("FROM SER $serPath")
-            return DeserializedRAMDictionary(serPath)
-        }
-
-        @JvmStatic
-        fun makeFileFactory(tag: String?): (file: File, config: Config?) -> IDictionary {
-            println("File dictionary factory: $tag")
-            return when (tag) {
-                "SOURCE" -> { file: File, config: Config? -> DataSourceDictionary(file, config) }
-                "RAM"    -> { file: File, config: Config? -> Dictionary(file, config) }
-                else     -> { file: File, config: Config? -> RAMDictionary(file, IMMEDIATE_LOAD, config) }
-            }
-        }
-
-        @JvmStatic
-        fun makeURLFactory(tag: String?): (url: URL, config: Config?) -> IDictionary {
-            println("URL dictionary factory: $tag")
-            return when (tag) {
-                "SOURCE" -> { url: URL, config: Config? -> DataSourceDictionary(url, config) }
-                "RAM"    -> { url: URL, config: Config? -> RAMDictionary(url, IMMEDIATE_LOAD, config) }
-                else     -> { url: URL, config: Config? -> Dictionary(url, config) }
-            }
-        }
-
-        fun toString(synset: Synset): String {
-            return getMembers(synset) + synset.gloss
-        }
-
-        fun getMembers(synset: Synset): String {
-            val sb = StringBuilder()
-            sb.append('{')
-            var first = true
-            for (sense in synset.senses) {
-                if (first) {
-                    first = false
-                } else {
-                    sb.append(' ')
-                }
-                sb.append(sense.lemma)
-            }
-            sb.append('}')
-            sb.append(' ')
-            return sb.toString()
-        }
-
-        private fun canRecurse(p: Pointer): Boolean {
+         private fun canRecurse(p: Pointer): Boolean {
             val symbol = p.symbol
             when (symbol) {
                 "@", "~", "%p", "#p", "%m", "#m", "%s", "#s", "*", ">" -> return true
@@ -413,14 +220,14 @@ class KWI(
             val wnHome = args[0]
             val lemma = args[1]
             val factoryHint = if (args.size > 2) args[2] else null
-            val factory = when (factoryHint) {
-                "--ram"      -> ramFactory
-                "--no-cache" -> nonCachingFactory
-                else         -> defaultFactory
+            val tag = when (factoryHint) {
+                "--ram"      -> "RAM"
+                "--no-cache" -> "SOURCE"
+                else         -> "DEFAULT"
             }
 
             lateinit var kwi: KWI
-            val timeTaken = measureTimeMillis { kwi = KWI(fromFile(wnHome, factory=factory)) }
+            val timeTaken = measureTimeMillis { kwi = KWI(fromFile(wnHome, factory=makeFactory(tag))) }
             val timeTaken2 = measureTimeMillis { kwi.walk(lemma, System.out) }
 
             println("Time taken loading : $timeTaken ms")
