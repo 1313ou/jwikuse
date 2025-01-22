@@ -23,8 +23,6 @@ class KWIImportTests {
 
         private lateinit var PS: PrintStream
 
-        private lateinit var kwi: KWI
-
         @JvmStatic
         @BeforeAll
         @Throws(IOException::class)

@@ -13,14 +13,14 @@ class ResolutionTests {
     val yi = SynsetID(2190548, POS.ADJECTIVE)
 
     @Test
-    fun headSense() {
+    fun head() {
         val y = kwi.dict.getSynset(yi)!!
         val hs = y.adjHead
-        println("headsense $hs")
+        println("head $hs")
     }
 
     @Test
-    fun headSense2() {
+    fun headSense() {
         val y = kwi.dict.getSynset(yi)!!
         val hsi = y.headSynsetID!!
         val y2 = kwi.dict.getSynset(hsi)!!
