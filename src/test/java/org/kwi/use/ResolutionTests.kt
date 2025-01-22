@@ -15,7 +15,7 @@ class ResolutionTests {
     @Test
     fun headSense() {
         val y = kwi.dict.getSynset(yi)!!
-        val hs = y.adjHeadSenseID
+        val hs = y.adjHead
         println("headsense $hs")
     }
 
