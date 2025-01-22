@@ -190,7 +190,7 @@ class KWI(
     }
 
     fun Synset.getMembers(): String {
-        return dict.seqMembers(this).joinToString(separator = ",", prefix = "{", postfix = "}")
+        return seqMembers(this).joinToString(separator = ",", prefix = "{", postfix = "}")
     }
 
     fun Synset.toString(): String {
